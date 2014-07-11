@@ -6,6 +6,9 @@
 
 package com.yagodar.bolter;
 
+import com.yagodar.bolter.view.BolterFrame;
+import java.awt.EventQueue;
+
 /**
  *
  * @author profselection-left
@@ -16,7 +19,13 @@ public class Bolter {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                BolterFrame bolterFrame = new BolterFrame();
+                bolterFrame.setVisible(true);                
+            }
+        });
     }
     
 }
