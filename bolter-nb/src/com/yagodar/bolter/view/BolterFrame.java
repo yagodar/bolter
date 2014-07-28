@@ -6,6 +6,13 @@
 
 package com.yagodar.bolter.view;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author profselection-left
@@ -38,7 +45,7 @@ public class BolterFrame extends javax.swing.JFrame {
         jButtonDelSite = new javax.swing.JButton();
         jButtonDelAllSites = new javax.swing.JButton();
         jScrollPaneListSites = new javax.swing.JScrollPane();
-        jListSites = new javax.swing.JList();
+        jListSites = new javax.swing.JList<String>();
         jPanelSearchFilterDate = new javax.swing.JPanel();
         jLabelDateFrom = new javax.swing.JLabel();
         jTextFieldDateFrom = new javax.swing.JTextField();
@@ -70,6 +77,11 @@ public class BolterFrame extends javax.swing.JFrame {
 
         jButtonSearch.setFont(new java.awt.Font("Tahoma", 1, 19)); // NOI18N
         jButtonSearch.setText("bolt");
+        jButtonSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSearchActionPerformed(evt);
+            }
+        });
 
         jPanelSearchFilter.setMinimumSize(new java.awt.Dimension(730, 420));
         jPanelSearchFilter.setName(""); // NOI18N
@@ -99,6 +111,7 @@ public class BolterFrame extends javax.swing.JFrame {
         jScrollPaneListSites.setMinimumSize(new java.awt.Dimension(488, 320));
         jScrollPaneListSites.setPreferredSize(new java.awt.Dimension(488, 320));
 
+        jListSites.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jScrollPaneListSites.setViewportView(jListSites);
 
         javax.swing.GroupLayout jPanelSearchFilterSitesLayout = new javax.swing.GroupLayout(jPanelSearchFilterSites);
@@ -216,7 +229,7 @@ public class BolterFrame extends javax.swing.JFrame {
         jPanelSearchFilterLayout.setHorizontalGroup(
             jPanelSearchFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelSearchFilterLayout.createSequentialGroup()
-                .addComponent(jPanelSearchFilterSites, javax.swing.GroupLayout.DEFAULT_SIZE, 520, Short.MAX_VALUE)
+                .addComponent(jPanelSearchFilterSites, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelSearchFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanelSearchFilterDate, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
@@ -228,7 +241,7 @@ public class BolterFrame extends javax.swing.JFrame {
                 .addComponent(jPanelSearchFilterDate, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanelSearchFilterEngine, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jPanelSearchFilterSites, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+            .addComponent(jPanelSearchFilterSites, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         jMenuBar.setMinimumSize(new java.awt.Dimension(92, 21));
@@ -287,6 +300,16 @@ public class BolterFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonDelAllSitesActionPerformed
 
+    private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
+        try {
+            //TODO 
+            Desktop.getDesktop().browse(new URI("http://google.ru/"));
+        } catch (IOException | URISyntaxException ex) {
+            //TODO окно об ошибке
+            Logger.getLogger(BolterFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonSearchActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAddSite;
     private javax.swing.JButton jButtonDelAllSites;
@@ -297,7 +320,7 @@ public class BolterFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelApp;
     private javax.swing.JLabel jLabelDateFrom;
     private javax.swing.JLabel jLabelDateTo;
-    private javax.swing.JList jListSites;
+    private javax.swing.JList<String> jListSites;
     private javax.swing.JMenuBar jMenuBar;
     private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenuItem jMenuFileItemExit;

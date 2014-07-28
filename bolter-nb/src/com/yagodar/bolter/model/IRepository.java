@@ -4,13 +4,13 @@
  * and open the template in the editor.
  */
 
-package com.yagodar.bolter.model.loader;
+package com.yagodar.bolter.model;
 
 /**
  *
  * @author АППДКт78М
  */
-public interface IModelLoader<T> {    
+public interface IRepository<T> {    
     public T load();
     public void save(T model);
 }

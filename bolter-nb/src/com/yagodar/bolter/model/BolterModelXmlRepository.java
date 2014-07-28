@@ -4,17 +4,13 @@
  * and open the template in the editor.
  */
 
-package com.yagodar.bolter.model.loader;
-
-import com.yagodar.bolter.model.BolterModel;
-import java.util.ArrayList;
-import java.util.Date;
+package com.yagodar.bolter.model;
 
 /**
  *
  * @author АППДКт78М
  */
-public class BolterModelXmlLoader implements IModelLoader<BolterModel> {
+public class BolterModelXmlRepository implements IRepository<BolterModel> {
 
     @Override
     public BolterModel load() {
