@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.yagodar.bolter.model;
+package com.yagodar.bolter.model.rep;
 
 /**
  *

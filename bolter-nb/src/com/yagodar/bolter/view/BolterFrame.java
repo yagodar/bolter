@@ -6,12 +6,15 @@
 
 package com.yagodar.bolter.view;
 
+import com.yagodar.bolter.model.BolterModel;
+import com.yagodar.bolter.model.sew.AWebSearchEngineWrapper;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  *
@@ -22,8 +25,10 @@ public class BolterFrame extends javax.swing.JFrame {
     /**
      * Creates new form BolterFrame
      */
-    public BolterFrame() {
+    public BolterFrame(BolterModel bolterModel) {
         initComponents();
+        
+        this.bolterModel = bolterModel;
     }
 
     /**
@@ -302,14 +307,31 @@ public class BolterFrame extends javax.swing.JFrame {
 
     private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
         try {
-            //TODO 
-            Desktop.getDesktop().browse(new URI("http://google.ru/"));
+            //TODO
+            for(AWebSearchEngineWrapper wrapper : bolterModel.getUsedWebSearchEngineWrappers()) {
+                String searchWord = "Hello World!";
+                
+                ArrayList<String> listSites = new ArrayList<>();
+                listSites.add("vk.com");
+                listSites.add("facebook.com");
+                
+                Calendar calFrom = Calendar.getInstance();
+                calFrom.set(2014, 1, 1);
+                Date dateFrom = calFrom.getTime();
+                
+                Calendar calTo = Calendar.getInstance();
+                calTo.set(2014, 6, 1);
+                Date dateTo = calTo.getTime();
+                
+                Desktop.getDesktop().browse(new URI(wrapper.genSearchQuery(searchWord, listSites, dateFrom, dateTo)));
+            }
         } catch (IOException | URISyntaxException ex) {
             //TODO окно об ошибке
-            Logger.getLogger(BolterFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButtonSearchActionPerformed
 
+    private BolterModel bolterModel;
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAddSite;
     private javax.swing.JButton jButtonDelAllSites;

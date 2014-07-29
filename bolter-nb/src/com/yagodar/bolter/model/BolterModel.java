@@ -6,28 +6,31 @@
 
 package com.yagodar.bolter.model;
 
+import com.yagodar.bolter.model.sew.AWebSearchEngineWrapper;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Set;
 
 /**
  *
  * @author АППДКт78М
  */
 public class BolterModel {
-    public String getSearch() {
-        return search;
+    public String getSearchWord() {
+        return searchWord;
     }
 
-    public void setSearch(String search) {
-        this.search = search;
+    public void setSearchWord(String searchWord) {
+        this.searchWord = searchWord;
     }
      
-    public String getSite() {
-        return site;
+    public String getLastSite() {
+        return lastSite;
     }
 
-    public void setSite(String site) {
-        this.site = site;
+    public void setLastSite(String lastSite) {
+        this.lastSite = lastSite;
     }
 
     public ArrayList<String> getListSites() {
@@ -38,34 +41,50 @@ public class BolterModel {
         this.listSites = listSites;
     }
 
-    public Date getDateFrom() {
+    public Calendar getDateFrom() {
         return dateFrom;
     }
 
-    public void setDateFrom(Date dateFrom) {
+    public void setDateFrom(Calendar dateFrom) {
         this.dateFrom = dateFrom;
     }
 
-    public Date getDateTo() {
+    public Calendar getDateTo() {
         return dateTo;
     }
 
-    public void setDateTo(Date dateTo) {
+    public void setDateTo(Calendar dateTo) {
         this.dateTo = dateTo;
     }
 
-    public ArrayList<String> getListEngines() {
-        return listEngines;
+    public Set<AWebSearchEngineWrapper> getWebSearchEngineWrappers() {
+        return mapWebSearchEngineWrappers.keySet();
+    }
+    
+    public ArrayList<AWebSearchEngineWrapper> getUsedWebSearchEngineWrappers() {
+        ArrayList<AWebSearchEngineWrapper> usedWrappers= new ArrayList<>();
+                
+        for(AWebSearchEngineWrapper wrapper : mapWebSearchEngineWrappers.keySet()) {
+            if(isUsedWebSearchEngineWrapper(wrapper)) {
+                usedWrappers.add(wrapper);
+            }
+        }
+        
+        return usedWrappers;
     }
 
-    public void setListEngines(ArrayList<String> listEngines) {
-        this.listEngines = listEngines;
+    public void setUsedWebSearchEngineWrapper(AWebSearchEngineWrapper webSearchEngineWrapper, boolean isUsed) {
+        this.mapWebSearchEngineWrappers.put(webSearchEngineWrapper, isUsed);
+    }
+    
+    public boolean isUsedWebSearchEngineWrapper(AWebSearchEngineWrapper webSearchEngineWrapper) {
+        return this.mapWebSearchEngineWrappers.get(webSearchEngineWrapper);
     }
         
-    private String search;
-    private String site;
+    private String searchWord;
+    private String lastSite;
     private ArrayList<String> listSites;
-    private Date dateFrom;
-    private Date dateTo;
-    private ArrayList<String> listEngines;
+    private Calendar dateFrom;
+    private Calendar dateTo;
+    private final HashMap<AWebSearchEngineWrapper, Boolean> mapWebSearchEngineWrappers = new HashMap<>();
 }

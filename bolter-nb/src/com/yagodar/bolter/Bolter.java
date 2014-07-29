@@ -6,8 +6,13 @@
 
 package com.yagodar.bolter;
 
+import com.yagodar.bolter.model.BolterModel;
+import com.yagodar.bolter.model.sew.AWebSearchEngineWrapper;
+import com.yagodar.bolter.model.sew.GoogleSearchEngineWrapper;
+import com.yagodar.bolter.model.sew.YandexSearchEngineWrapper;
 import com.yagodar.bolter.view.BolterFrame;
 import java.awt.EventQueue;
+import java.util.ArrayList;
 
 /**
  *
@@ -22,7 +27,16 @@ public class Bolter {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                BolterFrame bolterFrame = new BolterFrame();
+                //TODO repository
+                
+                BolterModel bolterModel = new BolterModel();
+                
+                bolterModel.setUsedWebSearchEngineWrapper(new YandexSearchEngineWrapper(), true);
+                bolterModel.setUsedWebSearchEngineWrapper(new GoogleSearchEngineWrapper(), true);
+                
+                //repository
+                
+                BolterFrame bolterFrame = new BolterFrame(bolterModel);
                 bolterFrame.setVisible(true);                
             }
         });
