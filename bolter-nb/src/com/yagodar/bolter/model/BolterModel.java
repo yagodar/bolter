@@ -8,7 +8,7 @@ package com.yagodar.bolter.model;
 
 import com.yagodar.bolter.model.sew.AWebSearchEngineWrapper;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -25,35 +25,55 @@ public class BolterModel {
         this.searchWord = searchWord;
     }
      
-    public String getLastSite() {
-        return lastSite;
+    public String getLastAtSite() {
+        return lastAtSite;
     }
 
-    public void setLastSite(String lastSite) {
-        this.lastSite = lastSite;
+    public void setLastAtSite(String lastAtSite) {
+        this.lastAtSite = lastAtSite;
     }
 
-    public ArrayList<String> getListSites() {
-        return listSites;
+    public Set<String> getAtSiteUrlStrs() {
+        return mapAtSiteUrlStrs.keySet();
     }
 
-    public void setListSites(ArrayList<String> listSites) {
-        this.listSites = listSites;
+    public ArrayList<String> getUsedAtSiteUrlStrs() {
+        ArrayList<String> usedAtSiteUrlStrs= new ArrayList<>();
+                
+        for(String atSiteUrlStr : mapAtSiteUrlStrs.keySet()) {
+            if(isUsedAtSiteUrlStr(atSiteUrlStr)) {
+                usedAtSiteUrlStrs.add(atSiteUrlStr);
+            }
+        }
+        
+        return usedAtSiteUrlStrs;
+    }
+    
+    public void putUsedAtSiteUrlStr(String atSiteUrlStr, boolean isUsed) {
+        mapAtSiteUrlStrs.put(atSiteUrlStr, isUsed);
+    }
+    
+    public boolean isUsedAtSiteUrlStr(String atSiteUrlStr) {
+        return mapAtSiteUrlStrs.get(atSiteUrlStr);
+    }
+    
+    public void clearAtSiteUrlStr() {
+        mapAtSiteUrlStrs.clear();
     }
 
-    public Calendar getDateFrom() {
+    public Date getDateFrom() {
         return dateFrom;
     }
 
-    public void setDateFrom(Calendar dateFrom) {
+    public void setDateFrom(Date dateFrom) {
         this.dateFrom = dateFrom;
     }
 
-    public Calendar getDateTo() {
+    public Date getDateTo() {
         return dateTo;
     }
 
-    public void setDateTo(Calendar dateTo) {
+    public void setDateTo(Date dateTo) {
         this.dateTo = dateTo;
     }
 
@@ -73,18 +93,18 @@ public class BolterModel {
         return usedWrappers;
     }
 
-    public void setUsedWebSearchEngineWrapper(AWebSearchEngineWrapper webSearchEngineWrapper, boolean isUsed) {
-        this.mapWebSearchEngineWrappers.put(webSearchEngineWrapper, isUsed);
+    public void putUsedWebSearchEngineWrapper(AWebSearchEngineWrapper webSearchEngineWrapper, boolean isUsed) {
+        mapWebSearchEngineWrappers.put(webSearchEngineWrapper, isUsed);
     }
     
     public boolean isUsedWebSearchEngineWrapper(AWebSearchEngineWrapper webSearchEngineWrapper) {
-        return this.mapWebSearchEngineWrappers.get(webSearchEngineWrapper);
+        return mapWebSearchEngineWrappers.get(webSearchEngineWrapper);
     }
         
     private String searchWord;
-    private String lastSite;
-    private ArrayList<String> listSites;
-    private Calendar dateFrom;
-    private Calendar dateTo;
+    private String lastAtSite;
+    private Date dateFrom;
+    private Date dateTo;
     private final HashMap<AWebSearchEngineWrapper, Boolean> mapWebSearchEngineWrappers = new HashMap<>();
+    private final HashMap<String, Boolean> mapAtSiteUrlStrs = new HashMap<>();
 }

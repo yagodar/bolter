@@ -17,11 +17,15 @@ import java.util.Date;
  * @author АППДКт78М
  */
 public abstract class AWebSearchEngineWrapper {
-
     public AWebSearchEngineWrapper(String name, String url, String key) {
        this.name = name;
        this.url = url;
        this.key = key;
+    }
+    
+    @Override
+    public String toString() {
+        return name + " (" + url + ")";
     }
 
     public String getName() {
@@ -32,11 +36,11 @@ public abstract class AWebSearchEngineWrapper {
         return url;
     }
     
-    public String genSearchQuery(String searchWord, ArrayList<String> listSites, Date dateFrom, Date dateTo) {
+    public String genSearchQuery(String searchWord, ArrayList<String> listAtSites, Date dateFrom, Date dateTo) {
         WebSearchQuery webSearchQuery = new WebSearchQuery(url, key);
         
         applyFilter(SearchFilter.SEARCH_WORD, webSearchQuery, searchWord);
-        applyFilter(SearchFilter.SEARCH_AT_SITES, webSearchQuery, listSites);
+        applyFilter(SearchFilter.SEARCH_AT_SITES, webSearchQuery, listAtSites);
         applyFilter(SearchFilter.SEARCH_DATE, webSearchQuery, new Date[] {dateFrom, dateTo});
         
         return webSearchQuery.getQuery();

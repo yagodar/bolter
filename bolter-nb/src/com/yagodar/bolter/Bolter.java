@@ -7,12 +7,10 @@
 package com.yagodar.bolter;
 
 import com.yagodar.bolter.model.BolterModel;
-import com.yagodar.bolter.model.sew.AWebSearchEngineWrapper;
 import com.yagodar.bolter.model.sew.GoogleSearchEngineWrapper;
 import com.yagodar.bolter.model.sew.YandexSearchEngineWrapper;
 import com.yagodar.bolter.view.BolterFrame;
 import java.awt.EventQueue;
-import java.util.ArrayList;
 
 /**
  *
@@ -31,8 +29,8 @@ public class Bolter {
                 
                 BolterModel bolterModel = new BolterModel();
                 
-                bolterModel.setUsedWebSearchEngineWrapper(new YandexSearchEngineWrapper(), true);
-                bolterModel.setUsedWebSearchEngineWrapper(new GoogleSearchEngineWrapper(), true);
+                bolterModel.putUsedWebSearchEngineWrapper(new GoogleSearchEngineWrapper(), true);
+                bolterModel.putUsedWebSearchEngineWrapper(new YandexSearchEngineWrapper(), true);
                 
                 //repository
                 

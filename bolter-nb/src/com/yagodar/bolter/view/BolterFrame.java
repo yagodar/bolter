@@ -12,9 +12,13 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
+import javax.swing.DefaultListModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -24,11 +28,16 @@ public class BolterFrame extends javax.swing.JFrame {
 
     /**
      * Creates new form BolterFrame
+     * @param bolterModel
      */
     public BolterFrame(BolterModel bolterModel) {
         initComponents();
         
         this.bolterModel = bolterModel;
+        
+        initBehavior();
+        
+        initValues();
     }
 
     /**
@@ -45,20 +54,23 @@ public class BolterFrame extends javax.swing.JFrame {
         jButtonSearch = new javax.swing.JButton();
         jPanelSearchFilter = new javax.swing.JPanel();
         jPanelSearchFilterSites = new javax.swing.JPanel();
-        jTextFieldSite = new javax.swing.JTextField();
-        jButtonAddSite = new javax.swing.JButton();
-        jButtonDelSite = new javax.swing.JButton();
-        jButtonDelAllSites = new javax.swing.JButton();
-        jScrollPaneListSites = new javax.swing.JScrollPane();
-        jListSites = new javax.swing.JList<String>();
+        jTextFieldLastAtSite = new javax.swing.JTextField();
+        jButtonAddAtSite = new javax.swing.JButton();
+        jButtonDelAtSite = new javax.swing.JButton();
+        jButtonDelAllAtSites = new javax.swing.JButton();
+        jScrollPaneListAtSites = new javax.swing.JScrollPane();
+        jListAtSites = new javax.swing.JList<String>();
         jPanelSearchFilterDate = new javax.swing.JPanel();
         jLabelDateFrom = new javax.swing.JLabel();
-        jTextFieldDateFrom = new javax.swing.JTextField();
         jLabelDateTo = new javax.swing.JLabel();
-        jTextFieldDateTo = new javax.swing.JTextField();
+        jFormattedTextFieldDateFrom = new javax.swing.JFormattedTextField();
+        jFormattedTextFieldDateTo = new javax.swing.JFormattedTextField();
+        jButtonDelDates = new javax.swing.JButton();
+        jButtonDelDateFrom = new javax.swing.JButton();
+        jButtonDelDateTo = new javax.swing.JButton();
         jPanelSearchFilterEngine = new javax.swing.JPanel();
-        jCheckBoxEngineYandex = new javax.swing.JCheckBox();
-        jCheckBoxEngineGoogle = new javax.swing.JCheckBox();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jListWebSearchEngineWrappers = new javax.swing.JList();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuFileItemExit = new javax.swing.JMenuItem();
@@ -74,11 +86,16 @@ public class BolterFrame extends javax.swing.JFrame {
         jLabelApp.setFont(new java.awt.Font("Tahoma", 1, 25)); // NOI18N
         jLabelApp.setText("Bolter");
 
-        jTextFieldSearch.setFont(new java.awt.Font("Tahoma", 2, 18)); // NOI18N
-        jTextFieldSearch.setText("Поиск...");
+        jTextFieldSearch.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextFieldSearch.setUI(new HintTextFieldUI("Поиск..."));
         jTextFieldSearch.setMinimumSize(new java.awt.Dimension(563, 28));
         jTextFieldSearch.setName(""); // NOI18N
         jTextFieldSearch.setPreferredSize(new java.awt.Dimension(563, 28));
+        jTextFieldSearch.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextFieldSearchFocusLost(evt);
+            }
+        });
 
         jButtonSearch.setFont(new java.awt.Font("Tahoma", 1, 19)); // NOI18N
         jButtonSearch.setText("bolt");
@@ -96,28 +113,48 @@ public class BolterFrame extends javax.swing.JFrame {
         jPanelSearchFilterSites.setMinimumSize(new java.awt.Dimension(520, 420));
         jPanelSearchFilterSites.setRequestFocusEnabled(false);
 
-        jTextFieldSite.setText("http://");
-        jTextFieldSite.setMinimumSize(new java.awt.Dimension(488, 20));
-        jTextFieldSite.setPreferredSize(new java.awt.Dimension(488, 20));
-
-        jButtonAddSite.setText("Добавить");
-
-        jButtonDelSite.setText("Удалить");
-        jButtonDelSite.setToolTipText("");
-
-        jButtonDelAllSites.setText("Удалить все");
-        jButtonDelAllSites.setToolTipText("");
-        jButtonDelAllSites.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonDelAllSitesActionPerformed(evt);
+        jTextFieldLastAtSite.setUI(new HintTextFieldUI("URL адрес..."));
+        jTextFieldLastAtSite.setMinimumSize(new java.awt.Dimension(488, 20));
+        jTextFieldLastAtSite.setPreferredSize(new java.awt.Dimension(488, 20));
+        jTextFieldLastAtSite.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextFieldLastAtSiteFocusLost(evt);
             }
         });
 
-        jScrollPaneListSites.setMinimumSize(new java.awt.Dimension(488, 320));
-        jScrollPaneListSites.setPreferredSize(new java.awt.Dimension(488, 320));
+        jButtonAddAtSite.setText("Добавить");
+        jButtonAddAtSite.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAddAtSiteActionPerformed(evt);
+            }
+        });
 
-        jListSites.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jScrollPaneListSites.setViewportView(jListSites);
+        jButtonDelAtSite.setText("Удалить");
+        jButtonDelAtSite.setToolTipText("");
+        jButtonDelAtSite.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDelAtSiteActionPerformed(evt);
+            }
+        });
+
+        jButtonDelAllAtSites.setText("Удалить все");
+        jButtonDelAllAtSites.setToolTipText("");
+        jButtonDelAllAtSites.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDelAllAtSitesActionPerformed(evt);
+            }
+        });
+
+        jScrollPaneListAtSites.setMinimumSize(new java.awt.Dimension(488, 320));
+        jScrollPaneListAtSites.setPreferredSize(new java.awt.Dimension(488, 320));
+
+        jListAtSites.setModel(new DefaultListModel<String>());
+        jListAtSites.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                jListAtSitesValueChanged(evt);
+            }
+        });
+        jScrollPaneListAtSites.setViewportView(jListAtSites);
 
         javax.swing.GroupLayout jPanelSearchFilterSitesLayout = new javax.swing.GroupLayout(jPanelSearchFilterSites);
         jPanelSearchFilterSites.setLayout(jPanelSearchFilterSitesLayout);
@@ -127,28 +164,28 @@ public class BolterFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanelSearchFilterSitesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanelSearchFilterSitesLayout.createSequentialGroup()
-                        .addComponent(jButtonAddSite)
+                        .addComponent(jButtonAddAtSite)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonDelSite)
+                        .addComponent(jButtonDelAtSite)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonDelAllSites)
+                        .addComponent(jButtonDelAllAtSites)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPaneListSites, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextFieldSite, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPaneListAtSites, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTextFieldLastAtSite, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanelSearchFilterSitesLayout.setVerticalGroup(
             jPanelSearchFilterSitesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelSearchFilterSitesLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTextFieldSite, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTextFieldLastAtSite, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelSearchFilterSitesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonAddSite)
-                    .addComponent(jButtonDelSite)
-                    .addComponent(jButtonDelAllSites))
+                    .addComponent(jButtonAddAtSite)
+                    .addComponent(jButtonDelAtSite)
+                    .addComponent(jButtonDelAllAtSites))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPaneListSites, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPaneListAtSites, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -159,18 +196,54 @@ public class BolterFrame extends javax.swing.JFrame {
         jLabelDateFrom.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jLabelDateFrom.setText("с");
 
-        jTextFieldDateFrom.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        jTextFieldDateFrom.setText("дата начала");
-        jTextFieldDateFrom.setMinimumSize(new java.awt.Dimension(144, 20));
-        jTextFieldDateFrom.setPreferredSize(new java.awt.Dimension(144, 20));
-
         jLabelDateTo.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
         jLabelDateTo.setText("по");
 
-        jTextFieldDateTo.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        jTextFieldDateTo.setText("дата конца");
-        jTextFieldDateTo.setMinimumSize(new java.awt.Dimension(144, 20));
-        jTextFieldDateTo.setPreferredSize(new java.awt.Dimension(144, 20));
+        jFormattedTextFieldDateFrom.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
+        jFormattedTextFieldDateFrom.setUI(new HintTextFieldUI("ДД.ММ.ГГГГ"));
+        jFormattedTextFieldDateFrom.setMinimumSize(new java.awt.Dimension(125, 20));
+        jFormattedTextFieldDateFrom.setName(""); // NOI18N
+        jFormattedTextFieldDateFrom.setPreferredSize(new java.awt.Dimension(125, 20));
+        jFormattedTextFieldDateFrom.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jFormattedTextFieldDateFromFocusLost(evt);
+            }
+        });
+
+        jFormattedTextFieldDateTo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter()));
+        jFormattedTextFieldDateTo.setUI(new HintTextFieldUI("ДД.ММ.ГГГГ"));
+        jFormattedTextFieldDateTo.setMinimumSize(new java.awt.Dimension(125, 20));
+        jFormattedTextFieldDateTo.setName(""); // NOI18N
+        jFormattedTextFieldDateTo.setPreferredSize(new java.awt.Dimension(125, 20));
+        jFormattedTextFieldDateTo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jFormattedTextFieldDateToFocusLost(evt);
+            }
+        });
+
+        jButtonDelDates.setText("Очистить");
+        jButtonDelDates.setMaximumSize(new java.awt.Dimension(90, 23));
+        jButtonDelDates.setMinimumSize(new java.awt.Dimension(90, 23));
+        jButtonDelDates.setPreferredSize(new java.awt.Dimension(90, 23));
+        jButtonDelDates.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDelDatesActionPerformed(evt);
+            }
+        });
+
+        jButtonDelDateFrom.setIcon(new javax.swing.ImageIcon(getClass().getResource("/delete-icon-small.png"))); // NOI18N
+        jButtonDelDateFrom.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDelDateFromActionPerformed(evt);
+            }
+        });
+
+        jButtonDelDateTo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/delete-icon-small.png"))); // NOI18N
+        jButtonDelDateTo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDelDateToActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelSearchFilterDateLayout = new javax.swing.GroupLayout(jPanelSearchFilterDate);
         jPanelSearchFilterDate.setLayout(jPanelSearchFilterDateLayout);
@@ -181,32 +254,53 @@ public class BolterFrame extends javax.swing.JFrame {
                 .addGroup(jPanelSearchFilterDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabelDateTo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabelDateFrom, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(5, 5, 5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelSearchFilterDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextFieldDateFrom, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                    .addComponent(jTextFieldDateTo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jFormattedTextFieldDateFrom, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jFormattedTextFieldDateTo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelSearchFilterDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButtonDelDateFrom, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonDelDateTo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelSearchFilterDateLayout.createSequentialGroup()
+                .addGap(51, 51, 51)
+                .addComponent(jButtonDelDates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelSearchFilterDateLayout.setVerticalGroup(
             jPanelSearchFilterDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelSearchFilterDateLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanelSearchFilterDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelDateFrom)
-                    .addComponent(jTextFieldDateFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanelSearchFilterDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelDateTo)
-                    .addComponent(jTextFieldDateTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanelSearchFilterDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanelSearchFilterDateLayout.createSequentialGroup()
+                        .addGroup(jPanelSearchFilterDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabelDateFrom)
+                            .addComponent(jFormattedTextFieldDateFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonDelDateFrom, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanelSearchFilterDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabelDateTo)
+                            .addComponent(jFormattedTextFieldDateTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jButtonDelDateTo, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonDelDates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
-        jPanelSearchFilterEngine.setBorder(javax.swing.BorderFactory.createTitledBorder("Поисковик"));
+        jPanelSearchFilterEngine.setBorder(javax.swing.BorderFactory.createTitledBorder("Искать с помощью"));
 
-        jCheckBoxEngineYandex.setSelected(true);
-        jCheckBoxEngineYandex.setText("Яндекс");
-
-        jCheckBoxEngineGoogle.setText("Google");
+        jListWebSearchEngineWrappers.setModel(new DefaultListModel<String>());
+        jListWebSearchEngineWrappers.setMaximumSize(new java.awt.Dimension(0, 0));
+        jListWebSearchEngineWrappers.setMinimumSize(new java.awt.Dimension(0, 0));
+        jListWebSearchEngineWrappers.setName(""); // NOI18N
+        jListWebSearchEngineWrappers.setPreferredSize(new java.awt.Dimension(0, 0));
+        jListWebSearchEngineWrappers.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                jListWebSearchEngineWrappersValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jListWebSearchEngineWrappers);
 
         javax.swing.GroupLayout jPanelSearchFilterEngineLayout = new javax.swing.GroupLayout(jPanelSearchFilterEngine);
         jPanelSearchFilterEngine.setLayout(jPanelSearchFilterEngineLayout);
@@ -214,19 +308,15 @@ public class BolterFrame extends javax.swing.JFrame {
             jPanelSearchFilterEngineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelSearchFilterEngineLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanelSearchFilterEngineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCheckBoxEngineGoogle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jCheckBoxEngineYandex, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanelSearchFilterEngineLayout.setVerticalGroup(
             jPanelSearchFilterEngineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelSearchFilterEngineLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jCheckBoxEngineYandex)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jCheckBoxEngineGoogle)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanelSearchFilterLayout = new javax.swing.GroupLayout(jPanelSearchFilter);
@@ -237,15 +327,15 @@ public class BolterFrame extends javax.swing.JFrame {
                 .addComponent(jPanelSearchFilterSites, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelSearchFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanelSearchFilterDate, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-                    .addComponent(jPanelSearchFilterEngine, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jPanelSearchFilterDate, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
+                    .addComponent(jPanelSearchFilterEngine, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)))
         );
         jPanelSearchFilterLayout.setVerticalGroup(
             jPanelSearchFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelSearchFilterLayout.createSequentialGroup()
-                .addComponent(jPanelSearchFilterDate, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanelSearchFilterDate, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelSearchFilterEngine, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanelSearchFilterEngine, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE))
             .addComponent(jPanelSearchFilterSites, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
@@ -301,48 +391,256 @@ public class BolterFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButtonDelAllSitesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelAllSitesActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButtonDelAllSitesActionPerformed
+    private void initBehavior() {
+        setEnabledAddAtSitesButton();
+        jTextFieldLastAtSite.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                setEnabledAddAtSitesButton();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                setEnabledAddAtSitesButton();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {}
+        });
+        
+        setEnabledDelAtSitesButtons();
+        
+        setEnabledDelDateFromButton();
+        jFormattedTextFieldDateFrom.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                setEnabledDelDateFromButton();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                setEnabledDelDateFromButton();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {}
+        });
+        
+        setEnabledDelDateToButton();
+        jFormattedTextFieldDateTo.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                setEnabledDelDateToButton();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                setEnabledDelDateToButton();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {}
+        });
+        
+        jButtonSearch.requestFocus();
+    }
+    
+    private void initValues() {
+        isInitValuesMode = true;
+        
+        jTextFieldSearch.setText(bolterModel.getSearchWord());
+        
+        jTextFieldLastAtSite.setText(bolterModel.getLastAtSite());
+        
+        DefaultListModel<String> listAtSitesModel = (DefaultListModel<String>)jListAtSites.getModel();
+        for (String atSiteUrlStr : bolterModel.getAtSiteUrlStrs()) {
+            listAtSitesModel.addElement(atSiteUrlStr);
+            if(bolterModel.isUsedAtSiteUrlStr(atSiteUrlStr)) {
+                jListAtSites.addSelectionInterval(listAtSitesModel.getSize() - 1, listAtSitesModel.getSize() - 1);
+            }
+        }
+        
+        Date date = bolterModel.getDateFrom();
+        if (date != null) {
+            jFormattedTextFieldDateFrom.setText(SEARCH_DATE_FORMAT.format(date));
+        }
+
+        date = bolterModel.getDateTo();
+        if (date != null) {
+            jFormattedTextFieldDateTo.setText(SEARCH_DATE_FORMAT.format(date));
+        }
+        
+        DefaultListModel<String> listWebSearchEngineWrappersModel = (DefaultListModel<String>)jListWebSearchEngineWrappers.getModel();
+        for (AWebSearchEngineWrapper webSearchEngineWrapper : bolterModel.getWebSearchEngineWrappers()) {
+            listWebSearchEngineWrappersModel.addElement(webSearchEngineWrapper.toString());
+            if(bolterModel.isUsedWebSearchEngineWrapper(webSearchEngineWrapper)) {
+                jListWebSearchEngineWrappers.addSelectionInterval(listWebSearchEngineWrappersModel.getSize() - 1, listWebSearchEngineWrappersModel.getSize() - 1);
+            }
+        }
+        
+        isInitValuesMode = false;
+    }
+    
+    private void jButtonDelAllAtSitesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelAllAtSitesActionPerformed
+        //TODO okno c voprosom uvereni?
+        boolean shureToDel = true;
+
+        if (shureToDel) {
+            ((DefaultListModel<String>) jListAtSites.getModel()).removeAllElements();
+        }
+    }//GEN-LAST:event_jButtonDelAllAtSitesActionPerformed
 
     private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
         try {
-            //TODO
             for(AWebSearchEngineWrapper wrapper : bolterModel.getUsedWebSearchEngineWrappers()) {
-                String searchWord = "Hello World!";
+                String searchWord = bolterModel.getSearchWord();
                 
-                ArrayList<String> listSites = new ArrayList<>();
-                listSites.add("vk.com");
-                listSites.add("facebook.com");
-                
-                Calendar calFrom = Calendar.getInstance();
-                calFrom.set(2014, 1, 1);
-                Date dateFrom = calFrom.getTime();
-                
-                Calendar calTo = Calendar.getInstance();
-                calTo.set(2014, 6, 1);
-                Date dateTo = calTo.getTime();
-                
-                Desktop.getDesktop().browse(new URI(wrapper.genSearchQuery(searchWord, listSites, dateFrom, dateTo)));
+                if (searchWord != null && !searchWord.isEmpty()) {
+                    Desktop.getDesktop().browse(new URI(wrapper.genSearchQuery(searchWord, bolterModel.getUsedAtSiteUrlStrs(), bolterModel.getDateFrom(), bolterModel.getDateTo())));
+                }
             }
-        } catch (IOException | URISyntaxException ex) {
-            //TODO окно об ошибке
-        }
+        } catch (IOException | URISyntaxException ex) {}
     }//GEN-LAST:event_jButtonSearchActionPerformed
 
+    private void jTextFieldSearchFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldSearchFocusLost
+        if(!isInitValuesMode) {
+            bolterModel.setSearchWord(jTextFieldSearch.getText());
+        }
+    }//GEN-LAST:event_jTextFieldSearchFocusLost
+
+    private void jTextFieldLastAtSiteFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldLastAtSiteFocusLost
+        if(!isInitValuesMode) {
+            bolterModel.setLastAtSite(jTextFieldLastAtSite.getText());
+        }
+    }//GEN-LAST:event_jTextFieldLastAtSiteFocusLost
+
+    private void jButtonAddAtSiteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddAtSiteActionPerformed
+        String newAtSiteUrlStr = jTextFieldLastAtSite.getText();
+        
+        if(newAtSiteUrlStr != null && !newAtSiteUrlStr.isEmpty()) {
+            DefaultListModel<String> listAtSitesModel = (DefaultListModel<String>)jListAtSites.getModel();
+            
+            if(!listAtSitesModel.contains(newAtSiteUrlStr)) {
+                listAtSitesModel.addElement(newAtSiteUrlStr);
+                jListAtSites.addSelectionInterval(listAtSitesModel.getSize() - 1, listAtSitesModel.getSize() - 1);
+            }
+            else {
+                //TODO  окно об ошибке
+            }
+        }
+    }//GEN-LAST:event_jButtonAddAtSiteActionPerformed
+
+    private void jListAtSitesValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jListAtSitesValueChanged
+        if (!isInitValuesMode) {
+            DefaultListModel<String> listAtSitesModel = (DefaultListModel<String>) jListAtSites.getModel();
+
+            setEnabledDelAtSitesButtons();
+
+            bolterModel.clearAtSiteUrlStr();
+
+            Enumeration<String> en = listAtSitesModel.elements();
+            while (en.hasMoreElements()) {
+                String atSiteUrlStr = en.nextElement();
+                bolterModel.putUsedAtSiteUrlStr(atSiteUrlStr, jListAtSites.getSelectedValuesList().contains(atSiteUrlStr));
+            }
+        }
+    }//GEN-LAST:event_jListAtSitesValueChanged
+
+    private void jButtonDelAtSiteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelAtSiteActionPerformed
+        DefaultListModel<String> listAtSitesModel = (DefaultListModel<String>) jListAtSites.getModel();
+
+        //TODO okno c voprosom uvereni?
+        boolean shureToDel = true;
+
+        if (shureToDel) {
+            for (String atSiteUrlStr : jListAtSites.getSelectedValuesList()) {
+                listAtSitesModel.removeElement(atSiteUrlStr);
+            }
+        }
+    }//GEN-LAST:event_jButtonDelAtSiteActionPerformed
+
+    private void jFormattedTextFieldDateFromFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jFormattedTextFieldDateFromFocusLost
+        if (!isInitValuesMode) {
+            try {
+                bolterModel.setDateFrom(SEARCH_DATE_FORMAT.parse(jFormattedTextFieldDateFrom.getText()));
+            } catch (ParseException ex) {
+                bolterModel.setDateFrom(null);
+            }
+        }
+    }//GEN-LAST:event_jFormattedTextFieldDateFromFocusLost
+
+    private void jFormattedTextFieldDateToFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jFormattedTextFieldDateToFocusLost
+        if (!isInitValuesMode) {
+            try {
+                bolterModel.setDateTo(SEARCH_DATE_FORMAT.parse(jFormattedTextFieldDateTo.getText()));
+            } catch (ParseException ex) {
+                bolterModel.setDateTo(null);
+            }
+        }
+    }//GEN-LAST:event_jFormattedTextFieldDateToFocusLost
+
+    private void jButtonDelDateFromActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelDateFromActionPerformed
+        jFormattedTextFieldDateFrom.setValue(null);
+        bolterModel.setDateFrom(null);
+    }//GEN-LAST:event_jButtonDelDateFromActionPerformed
+
+    private void jButtonDelDateToActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelDateToActionPerformed
+        jFormattedTextFieldDateTo.setValue(null);
+        bolterModel.setDateTo(null);
+    }//GEN-LAST:event_jButtonDelDateToActionPerformed
+
+    private void jButtonDelDatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelDatesActionPerformed
+        jButtonDelDateFromActionPerformed(null);
+        jButtonDelDateToActionPerformed(null);
+    }//GEN-LAST:event_jButtonDelDatesActionPerformed
+
+    private void jListWebSearchEngineWrappersValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jListWebSearchEngineWrappersValueChanged
+        if (!isInitValuesMode) {
+            for (AWebSearchEngineWrapper webSearchEngineWrapper : bolterModel.getWebSearchEngineWrappers()) {
+                bolterModel.putUsedWebSearchEngineWrapper(webSearchEngineWrapper, jListWebSearchEngineWrappers.getSelectedValuesList().contains(webSearchEngineWrapper.toString()));
+            }
+        }
+    }//GEN-LAST:event_jListWebSearchEngineWrappersValueChanged
+
+    private void setEnabledAddAtSitesButton() {
+        jButtonAddAtSite.setEnabled(!jTextFieldLastAtSite.getText().isEmpty());
+    }
+
+    private void setEnabledDelAtSitesButtons() {
+        jButtonDelAllAtSites.setEnabled(!((DefaultListModel<String>) jListAtSites.getModel()).isEmpty());
+        jButtonDelAtSite.setEnabled(!jListAtSites.getSelectedValuesList().isEmpty());
+    }
+    
+    private void setEnabledDelDateFromButton() {
+        jButtonDelDateFrom.setEnabled(!jFormattedTextFieldDateFrom.getText().isEmpty());
+        jButtonDelDates.setEnabled(!jFormattedTextFieldDateFrom.getText().isEmpty() || !jFormattedTextFieldDateTo.getText().isEmpty());
+    }
+    
+    private void setEnabledDelDateToButton() {
+        jButtonDelDateTo.setEnabled(!jFormattedTextFieldDateTo.getText().isEmpty());
+        jButtonDelDates.setEnabled(!jFormattedTextFieldDateFrom.getText().isEmpty() || !jFormattedTextFieldDateTo.getText().isEmpty());
+    }
+
     private BolterModel bolterModel;
+    private boolean isInitValuesMode;
+    
+    static final private SimpleDateFormat SEARCH_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonAddSite;
-    private javax.swing.JButton jButtonDelAllSites;
-    private javax.swing.JButton jButtonDelSite;
+    private javax.swing.JButton jButtonAddAtSite;
+    private javax.swing.JButton jButtonDelAllAtSites;
+    private javax.swing.JButton jButtonDelAtSite;
+    private javax.swing.JButton jButtonDelDateFrom;
+    private javax.swing.JButton jButtonDelDateTo;
+    private javax.swing.JButton jButtonDelDates;
     private javax.swing.JButton jButtonSearch;
-    private javax.swing.JCheckBox jCheckBoxEngineGoogle;
-    private javax.swing.JCheckBox jCheckBoxEngineYandex;
+    private javax.swing.JFormattedTextField jFormattedTextFieldDateFrom;
+    private javax.swing.JFormattedTextField jFormattedTextFieldDateTo;
     private javax.swing.JLabel jLabelApp;
     private javax.swing.JLabel jLabelDateFrom;
     private javax.swing.JLabel jLabelDateTo;
-    private javax.swing.JList<String> jListSites;
+    private javax.swing.JList<String> jListAtSites;
+    private javax.swing.JList jListWebSearchEngineWrappers;
     private javax.swing.JMenuBar jMenuBar;
     private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenuItem jMenuFileItemExit;
@@ -352,10 +650,9 @@ public class BolterFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelSearchFilterDate;
     private javax.swing.JPanel jPanelSearchFilterEngine;
     private javax.swing.JPanel jPanelSearchFilterSites;
-    private javax.swing.JScrollPane jScrollPaneListSites;
-    private javax.swing.JTextField jTextFieldDateFrom;
-    private javax.swing.JTextField jTextFieldDateTo;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPaneListAtSites;
+    private javax.swing.JTextField jTextFieldLastAtSite;
     private javax.swing.JTextField jTextFieldSearch;
-    private javax.swing.JTextField jTextFieldSite;
     // End of variables declaration//GEN-END:variables
 }
