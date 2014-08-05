@@ -3,19 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.yagodar.bolter.view;
 
 import com.yagodar.bolter.model.BolterModel;
+import com.yagodar.bolter.model.rep.BolterModelPreferencesRepository;
 import com.yagodar.bolter.model.sew.AWebSearchEngineWrapper;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Desktop;
+import java.awt.FocusTraversalPolicy;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.prefs.Preferences;
 import javax.swing.DefaultListModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -28,16 +33,19 @@ public class BolterFrame extends javax.swing.JFrame {
 
     /**
      * Creates new form BolterFrame
+     *
      * @param bolterModel
      */
     public BolterFrame(BolterModel bolterModel) {
         initComponents();
-        
-        this.bolterModel = bolterModel;
-        
-        initBehavior();
-        
+
+        initPreferences();
+
+        initModel(bolterModel);
+
         initValues();
+
+        initBehavior();
     }
 
     /**
@@ -70,18 +78,32 @@ public class BolterFrame extends javax.swing.JFrame {
         jButtonDelDateTo = new javax.swing.JButton();
         jPanelSearchFilterEngine = new javax.swing.JPanel();
         jScrollPaneWebSearchEngineWrappers = new javax.swing.JScrollPane();
-        jListWebSearchEngineWrappers = new javax.swing.JList();
+        jListWebSearchEngineWrappers = new javax.swing.JList<AWebSearchEngineWrapper>();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuFileItemExit = new javax.swing.JMenuItem();
         jMenuHelp = new javax.swing.JMenu();
         jMenuHelpItemAbout = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Bolter");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setFocusTraversalPolicy(new BolterFocusTraversalPolicy());
         setMinimumSize(new java.awt.Dimension(825, 550));
         setName("bolterFrame"); // NOI18N
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentMoved(java.awt.event.ComponentEvent evt) {
+                formComponentMoved(evt);
+            }
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
+            }
+        });
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jLabelApp.setFont(new java.awt.Font("Tahoma", 1, 25)); // NOI18N
         jLabelApp.setText("Bolter");
@@ -90,7 +112,6 @@ public class BolterFrame extends javax.swing.JFrame {
         jTextFieldSearch.setUI(new HintTextFieldUI("Поиск..."));
         jTextFieldSearch.setMinimumSize(new java.awt.Dimension(563, 28));
         jTextFieldSearch.setName(""); // NOI18N
-        jTextFieldSearch.setNextFocusableComponent(jTextFieldLastAtSite);
         jTextFieldSearch.setPreferredSize(new java.awt.Dimension(563, 28));
         jTextFieldSearch.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -121,7 +142,6 @@ public class BolterFrame extends javax.swing.JFrame {
 
         jTextFieldLastAtSite.setUI(new HintTextFieldUI("URL адрес..."));
         jTextFieldLastAtSite.setMinimumSize(new java.awt.Dimension(488, 20));
-        jTextFieldLastAtSite.setNextFocusableComponent(jListAtSites);
         jTextFieldLastAtSite.setPreferredSize(new java.awt.Dimension(488, 20));
         jTextFieldLastAtSite.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -161,7 +181,6 @@ public class BolterFrame extends javax.swing.JFrame {
         jScrollPaneListAtSites.setPreferredSize(new java.awt.Dimension(488, 320));
 
         jListAtSites.setModel(new DefaultListModel<String>());
-        jListAtSites.setNextFocusableComponent(jFormattedTextFieldDateFrom);
         jListAtSites.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 jListAtSitesValueChanged(evt);
@@ -216,7 +235,6 @@ public class BolterFrame extends javax.swing.JFrame {
         jFormattedTextFieldDateFrom.setUI(new HintTextFieldUI("ДД.ММ.ГГГГ"));
         jFormattedTextFieldDateFrom.setMinimumSize(new java.awt.Dimension(125, 20));
         jFormattedTextFieldDateFrom.setName(""); // NOI18N
-        jFormattedTextFieldDateFrom.setNextFocusableComponent(jButtonDelDateTo);
         jFormattedTextFieldDateFrom.setPreferredSize(new java.awt.Dimension(125, 20));
         jFormattedTextFieldDateFrom.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -233,7 +251,6 @@ public class BolterFrame extends javax.swing.JFrame {
         jFormattedTextFieldDateTo.setUI(new HintTextFieldUI("ДД.ММ.ГГГГ"));
         jFormattedTextFieldDateTo.setMinimumSize(new java.awt.Dimension(125, 20));
         jFormattedTextFieldDateTo.setName(""); // NOI18N
-        jFormattedTextFieldDateTo.setNextFocusableComponent(jListWebSearchEngineWrappers);
         jFormattedTextFieldDateTo.setPreferredSize(new java.awt.Dimension(125, 20));
         jFormattedTextFieldDateTo.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -316,9 +333,8 @@ public class BolterFrame extends javax.swing.JFrame {
 
         jPanelSearchFilterEngine.setBorder(javax.swing.BorderFactory.createTitledBorder("Искать с помощью"));
 
-        jListWebSearchEngineWrappers.setModel(new DefaultListModel<String>());
+        jListWebSearchEngineWrappers.setModel(new DefaultListModel<AWebSearchEngineWrapper>());
         jListWebSearchEngineWrappers.setName(""); // NOI18N
-        jListWebSearchEngineWrappers.setNextFocusableComponent(jButtonSearch);
         jListWebSearchEngineWrappers.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 jListWebSearchEngineWrappersValueChanged(evt);
@@ -368,6 +384,11 @@ public class BolterFrame extends javax.swing.JFrame {
         jMenuFile.setText("Файл");
 
         jMenuFileItemExit.setText("Выход");
+        jMenuFileItemExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuFileItemExitActionPerformed(evt);
+            }
+        });
         jMenuFile.add(jMenuFileItemExit);
 
         jMenuBar.add(jMenuFile);
@@ -415,6 +436,22 @@ public class BolterFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void initPreferences() {
+        prefNode = Preferences.userNodeForPackage(getClass());
+
+        frameNormalX = prefNode.getInt(FRAME_X_MARK, getX());
+        frameNormalY = prefNode.getInt(FRAME_Y_MARK, getY());
+        frameNormalWidth = prefNode.getInt(FRAME_WIDTH_MARK, getWidth());
+        frameNormalHeight = prefNode.getInt(FRAME_HEIGHT_MARK, getHeight());
+        setBounds(frameNormalX, frameNormalY, frameNormalWidth, frameNormalHeight);
+
+        setExtendedState(prefNode.getInt(FRAME_EXTENDED_STATE_MARK, getExtendedState()));
+    }
+
+    private void initModel(BolterModel bolterModel) {
+        this.bolterModel = bolterModel;
+    }
+
     private void initBehavior() {
         setEnabledAddAtSitesButton();
         jTextFieldLastAtSite.getDocument().addDocumentListener(new DocumentListener() {
@@ -429,33 +466,34 @@ public class BolterFrame extends javax.swing.JFrame {
             }
 
             @Override
-            public void changedUpdate(DocumentEvent e) {}
+            public void changedUpdate(DocumentEvent e) {
+            }
         });
-        
+
         setEnabledDelAtSitesButtons();
-        
+
         setEnabledDelDateFromButton();
-        
+
         setEnabledDelDateToButton();
-        
+
         jButtonSearch.requestFocus();
     }
-    
+
     private void initValues() {
         isInitValuesMode = true;
-        
+
         jTextFieldSearch.setText(bolterModel.getSearchWord());
-        
+
         jTextFieldLastAtSite.setText(bolterModel.getLastAtSite());
-        
-        DefaultListModel<String> listAtSitesModel = (DefaultListModel<String>)jListAtSites.getModel();
+
+        DefaultListModel<String> listAtSitesModel = (DefaultListModel<String>) jListAtSites.getModel();
         for (String atSiteUrlStr : bolterModel.getAtSiteUrlStrs()) {
             listAtSitesModel.addElement(atSiteUrlStr);
-            if(bolterModel.isUsedAtSiteUrlStr(atSiteUrlStr)) {
+            if (bolterModel.isUsedAtSiteUrlStr(atSiteUrlStr)) {
                 jListAtSites.addSelectionInterval(listAtSitesModel.getSize() - 1, listAtSitesModel.getSize() - 1);
             }
         }
-        
+
         Date date = bolterModel.getDateFrom();
         if (date != null) {
             jFormattedTextFieldDateFrom.setText(SEARCH_DATE_FORMAT.format(date));
@@ -465,18 +503,18 @@ public class BolterFrame extends javax.swing.JFrame {
         if (date != null) {
             jFormattedTextFieldDateTo.setText(SEARCH_DATE_FORMAT.format(date));
         }
-        
-        DefaultListModel<String> listWebSearchEngineWrappersModel = (DefaultListModel<String>)jListWebSearchEngineWrappers.getModel();
+
+        DefaultListModel<AWebSearchEngineWrapper> listWebSearchEngineWrappersModel = (DefaultListModel<AWebSearchEngineWrapper>) jListWebSearchEngineWrappers.getModel();
         for (AWebSearchEngineWrapper webSearchEngineWrapper : bolterModel.getWebSearchEngineWrappers()) {
-            listWebSearchEngineWrappersModel.addElement(webSearchEngineWrapper.toString());
-            if(bolterModel.isUsedWebSearchEngineWrapper(webSearchEngineWrapper)) {
+            listWebSearchEngineWrappersModel.addElement(webSearchEngineWrapper);
+            if (bolterModel.isUsedWebSearchEngineWrapper(webSearchEngineWrapper.getMark())) {
                 jListWebSearchEngineWrappers.addSelectionInterval(listWebSearchEngineWrappersModel.getSize() - 1, listWebSearchEngineWrappersModel.getSize() - 1);
             }
         }
-        
+
         isInitValuesMode = false;
     }
-    
+
     private void jButtonDelAllAtSitesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelAllAtSitesActionPerformed
         //TODO okno c voprosom uvereni?
         boolean shureToDel = true;
@@ -488,39 +526,39 @@ public class BolterFrame extends javax.swing.JFrame {
 
     private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
         try {
-            for(AWebSearchEngineWrapper wrapper : bolterModel.getUsedWebSearchEngineWrappers()) {
+            for (AWebSearchEngineWrapper wrapper : bolterModel.getUsedWebSearchEngineWrappers()) {
                 String searchWord = bolterModel.getSearchWord();
-                
+
                 if (searchWord != null && !searchWord.isEmpty()) {
                     Desktop.getDesktop().browse(new URI(wrapper.genSearchQuery(searchWord, bolterModel.getUsedAtSiteUrlStrs(), bolterModel.getDateFrom(), bolterModel.getDateTo())));
                 }
             }
-        } catch (IOException | URISyntaxException ex) {}
+        } catch (IOException | URISyntaxException ex) {
+        }
     }//GEN-LAST:event_jButtonSearchActionPerformed
 
     private void jTextFieldSearchFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldSearchFocusLost
-        if(!isInitValuesMode) {
+        if (!isInitValuesMode) {
             bolterModel.setSearchWord(jTextFieldSearch.getText());
         }
     }//GEN-LAST:event_jTextFieldSearchFocusLost
 
     private void jTextFieldLastAtSiteFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldLastAtSiteFocusLost
-        if(!isInitValuesMode) {
+        if (!isInitValuesMode) {
             bolterModel.setLastAtSite(jTextFieldLastAtSite.getText());
         }
     }//GEN-LAST:event_jTextFieldLastAtSiteFocusLost
 
     private void jButtonAddAtSiteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddAtSiteActionPerformed
         String newAtSiteUrlStr = jTextFieldLastAtSite.getText();
-        
-        if(newAtSiteUrlStr != null && !newAtSiteUrlStr.isEmpty()) {
-            DefaultListModel<String> listAtSitesModel = (DefaultListModel<String>)jListAtSites.getModel();
-            
-            if(!listAtSitesModel.contains(newAtSiteUrlStr)) {
+
+        if (newAtSiteUrlStr != null && !newAtSiteUrlStr.isEmpty()) {
+            DefaultListModel<String> listAtSitesModel = (DefaultListModel<String>) jListAtSites.getModel();
+
+            if (!listAtSitesModel.contains(newAtSiteUrlStr)) {
                 listAtSitesModel.addElement(newAtSiteUrlStr);
                 jListAtSites.addSelectionInterval(listAtSitesModel.getSize() - 1, listAtSitesModel.getSize() - 1);
-            }
-            else {
+            } else {
                 //TODO  окно об ошибке
             }
         }
@@ -597,7 +635,7 @@ public class BolterFrame extends javax.swing.JFrame {
     private void jListWebSearchEngineWrappersValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jListWebSearchEngineWrappersValueChanged
         if (!isInitValuesMode) {
             for (AWebSearchEngineWrapper webSearchEngineWrapper : bolterModel.getWebSearchEngineWrappers()) {
-                bolterModel.putUsedWebSearchEngineWrapper(webSearchEngineWrapper, jListWebSearchEngineWrappers.getSelectedValuesList().contains(webSearchEngineWrapper.toString()));
+                bolterModel.putUsedWebSearchEngineWrapperMark(webSearchEngineWrapper.getMark(), jListWebSearchEngineWrappers.getSelectedValuesList().contains(webSearchEngineWrapper));
             }
         }
     }//GEN-LAST:event_jListWebSearchEngineWrappersValueChanged
@@ -619,6 +657,47 @@ public class BolterFrame extends javax.swing.JFrame {
         jButtonSearchActionPerformed(evt);
     }//GEN-LAST:event_jTextFieldSearchActionPerformed
 
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        jMenuFileItemExitActionPerformed(null);
+    }//GEN-LAST:event_formWindowClosing
+
+    private void jMenuFileItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuFileItemExitActionPerformed
+        jTextFieldSearchFocusLost(null);
+        jTextFieldLastAtSiteFocusLost(null);
+        jFormattedTextFieldDateFromFocusLost(null);
+        jFormattedTextFieldDateToFocusLost(null);
+
+        BolterModelPreferencesRepository.getInstance().save(bolterModel);
+
+        prefNode.putInt(FRAME_X_MARK, frameNormalX);
+        prefNode.putInt(FRAME_Y_MARK, frameNormalY);
+        prefNode.putInt(FRAME_WIDTH_MARK, frameNormalWidth);
+        prefNode.putInt(FRAME_HEIGHT_MARK, frameNormalHeight);
+        prefNode.putInt(FRAME_EXTENDED_STATE_MARK, getExtendedState());
+
+        System.exit(0);
+    }//GEN-LAST:event_jMenuFileItemExitActionPerformed
+
+    private void formComponentMoved(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentMoved
+        if ((getExtendedState() & MAXIMIZED_HORIZ) != MAXIMIZED_HORIZ) {
+            frameNormalX = getX();
+        }
+
+        if ((getExtendedState() & MAXIMIZED_VERT) != MAXIMIZED_VERT) {
+            frameNormalY = getY();
+        }
+    }//GEN-LAST:event_formComponentMoved
+
+    private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+        if ((getExtendedState() & MAXIMIZED_HORIZ) != MAXIMIZED_HORIZ) {
+            frameNormalWidth = getWidth();
+        }
+
+        if ((getExtendedState() & MAXIMIZED_VERT) != MAXIMIZED_VERT) {
+            frameNormalHeight = getHeight();
+        }
+    }//GEN-LAST:event_formComponentResized
+
     private void setEnabledAddAtSitesButton() {
         jButtonAddAtSite.setEnabled(!jTextFieldLastAtSite.getText().isEmpty());
     }
@@ -627,22 +706,133 @@ public class BolterFrame extends javax.swing.JFrame {
         jButtonDelAllAtSites.setEnabled(!((DefaultListModel<String>) jListAtSites.getModel()).isEmpty());
         jButtonDelAtSite.setEnabled(!jListAtSites.getSelectedValuesList().isEmpty());
     }
-    
+
     private void setEnabledDelDateFromButton() {
         jButtonDelDateFrom.setEnabled(!jFormattedTextFieldDateFrom.getText().isEmpty());
         jButtonDelDates.setEnabled(!jFormattedTextFieldDateFrom.getText().isEmpty() || !jFormattedTextFieldDateTo.getText().isEmpty());
     }
-    
+
     private void setEnabledDelDateToButton() {
         jButtonDelDateTo.setEnabled(!jFormattedTextFieldDateTo.getText().isEmpty());
         jButtonDelDates.setEnabled(!jFormattedTextFieldDateFrom.getText().isEmpty() || !jFormattedTextFieldDateTo.getText().isEmpty());
     }
 
+    private class BolterFocusTraversalPolicy extends FocusTraversalPolicy {
+
+        public BolterFocusTraversalPolicy() {
+            focusOrder.add(jTextFieldSearch);
+            focusOrder.add(jTextFieldLastAtSite);
+            focusOrder.add(jButtonAddAtSite);
+            focusOrder.add(jButtonDelAtSite);
+            focusOrder.add(jButtonDelAllAtSites);
+            focusOrder.add(jListAtSites);
+            focusOrder.add(jFormattedTextFieldDateFrom);
+            focusOrder.add(jButtonDelDateFrom);
+            focusOrder.add(jFormattedTextFieldDateTo);
+            focusOrder.add(jButtonDelDateTo);
+            focusOrder.add(jButtonDelDates);
+            focusOrder.add(jListWebSearchEngineWrappers);
+            focusOrder.add(jButtonSearch);
+        }
+
+        @Override
+        public Component getComponentAfter(Container aContainer, Component aComponent) {
+            Component componentAfter = focusOrder.get((focusOrder.indexOf(aComponent) + 1) % focusOrder.size());
+            
+            if(!canBeFocusOwner(componentAfter)) {
+                componentAfter = getComponentAfter(aContainer, componentAfter);
+            }
+            
+            return componentAfter;
+        }
+
+        @Override
+        public Component getComponentBefore(Container aContainer, Component aComponent) {
+            int idx = focusOrder.indexOf(aComponent) - 1;
+            if (idx < 0) {
+                idx = focusOrder.size() - 1;
+            }
+            
+            Component componentBefore = focusOrder.get(idx);
+            
+            if(!canBeFocusOwner(componentBefore)) {
+                componentBefore = getComponentBefore(aContainer, componentBefore);
+            }
+            
+            return componentBefore;
+        }
+
+        @Override
+        public Component getFirstComponent(Container aContainer) {
+            Component firstComponent = null;
+            
+            for (int idx = 0; idx < focusOrder.size(); idx++) {
+                Component aComponent = focusOrder.get(idx);
+                if (canBeFocusOwner(aComponent)) {
+                    firstComponent = aComponent;
+                    break;
+                }
+            }
+            
+            return firstComponent;
+        }
+
+        @Override
+        public Component getLastComponent(Container aContainer) {
+            Component lastComponent = null;
+            
+            for (int idx = focusOrder.size() - 1; idx >= 0; idx--) {
+                Component aComponent = focusOrder.get(idx);
+                if (canBeFocusOwner(aComponent)) {
+                    lastComponent = aComponent;
+                    break;
+                }
+            }
+            
+            return lastComponent;
+        }
+
+        @Override
+        public Component getDefaultComponent(Container aContainer) {
+            return getFirstComponent(aContainer);
+        }
+        
+        private boolean canBeFocusOwner(Component aComponent) {
+            if (aComponent.isEnabled() && aComponent.isDisplayable() && aComponent.isVisible() && aComponent.isFocusable()) {
+                if(aComponent instanceof javax.swing.JList) {
+                    if(((javax.swing.JList) aComponent).getModel().getSize() > 0) {
+                        return true;
+                    }
+                    
+                    return false;
+                }
+                
+                return true;
+            }
+
+            return false;
+        }
+
+        private final ArrayList<Component> focusOrder = new ArrayList<>();
+    }
+
+    private Preferences prefNode;
     private BolterModel bolterModel;
     private boolean isInitValuesMode;
-    
+
+    private int frameNormalX;
+    private int frameNormalY;
+    private int frameNormalWidth;
+    private int frameNormalHeight;
+
+    static final private String FRAME_X_MARK = "frame_x";
+    static final private String FRAME_Y_MARK = "frame_y";
+    static final private String FRAME_WIDTH_MARK = "frame_width";
+    static final private String FRAME_HEIGHT_MARK = "frame_height";
+    static final private String FRAME_EXTENDED_STATE_MARK = "frame_extended_state";
+
     static final private SimpleDateFormat SEARCH_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAddAtSite;
     private javax.swing.JButton jButtonDelAllAtSites;
@@ -657,7 +847,7 @@ public class BolterFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelDateFrom;
     private javax.swing.JLabel jLabelDateTo;
     private javax.swing.JList<String> jListAtSites;
-    private javax.swing.JList jListWebSearchEngineWrappers;
+    private javax.swing.JList<AWebSearchEngineWrapper> jListWebSearchEngineWrappers;
     private javax.swing.JMenuBar jMenuBar;
     private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenuItem jMenuFileItemExit;

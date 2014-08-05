@@ -3,12 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.yagodar.bolter;
 
-import com.yagodar.bolter.model.BolterModel;
-import com.yagodar.bolter.model.sew.GoogleSearchEngineWrapper;
-import com.yagodar.bolter.model.sew.YandexSearchEngineWrapper;
+import com.yagodar.bolter.model.rep.BolterModelPreferencesRepository;
 import com.yagodar.bolter.view.BolterFrame;
 import java.awt.EventQueue;
 
@@ -25,19 +22,9 @@ public class Bolter {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                //TODO repository
-                
-                BolterModel bolterModel = new BolterModel();
-                
-                bolterModel.putUsedWebSearchEngineWrapper(new GoogleSearchEngineWrapper(), true);
-                bolterModel.putUsedWebSearchEngineWrapper(new YandexSearchEngineWrapper(), true);
-                
-                //repository
-                
-                BolterFrame bolterFrame = new BolterFrame(bolterModel);
-                bolterFrame.setVisible(true);                
+                (new BolterFrame(BolterModelPreferencesRepository.getInstance().load())).setVisible(true);
             }
         });
     }
-    
+
 }

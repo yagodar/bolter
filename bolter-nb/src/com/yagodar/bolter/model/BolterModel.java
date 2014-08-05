@@ -7,6 +7,8 @@
 package com.yagodar.bolter.model;
 
 import com.yagodar.bolter.model.sew.AWebSearchEngineWrapper;
+import com.yagodar.bolter.model.sew.WebSearchEngineWrapperHolder;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,7 +18,12 @@ import java.util.Set;
  *
  * @author АППДКт78М
  */
-public class BolterModel {
+public class BolterModel implements Serializable {
+
+    public BolterModel() {
+        init();
+    }
+    
     public String getSearchWord() {
         return searchWord;
     }
@@ -77,34 +84,45 @@ public class BolterModel {
         this.dateTo = dateTo;
     }
 
-    public Set<AWebSearchEngineWrapper> getWebSearchEngineWrappers() {
-        return mapWebSearchEngineWrappers.keySet();
+    public ArrayList<AWebSearchEngineWrapper> getWebSearchEngineWrappers() {
+        ArrayList<AWebSearchEngineWrapper> wrappers = new ArrayList<>();
+
+        for (String wrapperMark : mapWebSearchEngineWrapperMarks.keySet()) {
+            wrappers.add(WebSearchEngineWrapperHolder.valueOf(wrapperMark).getInstance());
+        }
+
+        return wrappers;
     }
-    
+
     public ArrayList<AWebSearchEngineWrapper> getUsedWebSearchEngineWrappers() {
-        ArrayList<AWebSearchEngineWrapper> usedWrappers= new ArrayList<>();
+        ArrayList<AWebSearchEngineWrapper> usedWrappers = new ArrayList<>();
                 
-        for(AWebSearchEngineWrapper wrapper : mapWebSearchEngineWrappers.keySet()) {
-            if(isUsedWebSearchEngineWrapper(wrapper)) {
-                usedWrappers.add(wrapper);
+        for(String wrapperMark : mapWebSearchEngineWrapperMarks.keySet()) {
+            if(isUsedWebSearchEngineWrapper(wrapperMark)) {
+                usedWrappers.add(WebSearchEngineWrapperHolder.valueOf(wrapperMark).getInstance());
             }
         }
         
         return usedWrappers;
     }
 
-    public void putUsedWebSearchEngineWrapper(AWebSearchEngineWrapper webSearchEngineWrapper, boolean isUsed) {
-        mapWebSearchEngineWrappers.put(webSearchEngineWrapper, isUsed);
+    public void putUsedWebSearchEngineWrapperMark(String webSearchEngineWrapperMark, boolean isUsed) {
+        mapWebSearchEngineWrapperMarks.put(webSearchEngineWrapperMark, isUsed);
     }
     
-    public boolean isUsedWebSearchEngineWrapper(AWebSearchEngineWrapper webSearchEngineWrapper) {
-        return mapWebSearchEngineWrappers.get(webSearchEngineWrapper);
+    public boolean isUsedWebSearchEngineWrapper(String webSearchEngineWrapperMark) {
+        return mapWebSearchEngineWrapperMarks.get(webSearchEngineWrapperMark);
     }
-        
+    
+    private void init() {
+        putUsedWebSearchEngineWrapperMark(WebSearchEngineWrapperHolder.YANDEX_SEW.name(), true);
+        putUsedWebSearchEngineWrapperMark(WebSearchEngineWrapperHolder.GOOGLE_SEW.name(), true);
+    }
+    
     private String searchWord;
     private String lastAtSite;
     private Date dateFrom;
     private Date dateTo;
-    private final HashMap<AWebSearchEngineWrapper, Boolean> mapWebSearchEngineWrappers = new HashMap<>();
+    private final HashMap<String, Boolean> mapWebSearchEngineWrapperMarks = new HashMap<>();
     private final HashMap<String, Boolean> mapAtSiteUrlStrs = new HashMap<>();
 }

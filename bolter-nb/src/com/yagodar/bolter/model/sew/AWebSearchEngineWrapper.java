@@ -18,9 +18,9 @@ import java.util.Date;
  */
 public abstract class AWebSearchEngineWrapper {
     public AWebSearchEngineWrapper(String name, String url, String key) {
-       this.name = name;
-       this.url = url;
-       this.key = key;
+        this.name = name;
+        this.url = url;
+        this.key = key;
     }
     
     @Override
@@ -28,6 +28,14 @@ public abstract class AWebSearchEngineWrapper {
         return name + " (" + url + ")";
     }
 
+    public void setMark(String mark) {
+        this.mark = mark;
+    }
+    
+    public String getMark() {
+        return mark;
+    }
+    
     public String getName() {
         return name;
     }
@@ -136,6 +144,7 @@ public abstract class AWebSearchEngineWrapper {
         webSearchQuery.putPostParam(getPostParamName(SearchFilter.SEARCH_WORD), curPostParamValue + additPostParamValue);
     }
     
+    private String mark;
     private final String name;
     private final String url;
     private final String key;
