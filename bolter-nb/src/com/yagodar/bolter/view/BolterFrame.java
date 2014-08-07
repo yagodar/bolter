@@ -12,6 +12,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.FocusTraversalPolicy;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,6 +23,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.prefs.Preferences;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -39,8 +41,10 @@ public class BolterFrame extends javax.swing.JFrame {
     public BolterFrame(BolterModel bolterModel) {
         initComponents();
 
+        initModalDialogs();
+        
         initPreferences();
-
+        
         initModel(bolterModel);
 
         initValues();
@@ -89,6 +93,7 @@ public class BolterFrame extends javax.swing.JFrame {
         setTitle("Bolter");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setFocusTraversalPolicy(new BolterFocusTraversalPolicy());
+        setIconImage(Toolkit.getDefaultToolkit().getImage("res/icon.png"));
         setMinimumSize(new java.awt.Dimension(825, 550));
         setName("bolterFrame"); // NOI18N
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -396,6 +401,11 @@ public class BolterFrame extends javax.swing.JFrame {
         jMenuHelp.setText("Справка");
 
         jMenuHelpItemAbout.setText("О программе");
+        jMenuHelpItemAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuHelpItemAboutActionPerformed(evt);
+            }
+        });
         jMenuHelp.add(jMenuHelpItemAbout);
 
         jMenuBar.add(jMenuHelp);
@@ -436,6 +446,10 @@ public class BolterFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void initModalDialogs() {
+        aboutDialog = new AboutDialog(this);
+    }
+    
     private void initPreferences() {
         prefNode = Preferences.userNodeForPackage(getClass());
 
@@ -516,24 +530,22 @@ public class BolterFrame extends javax.swing.JFrame {
     }
 
     private void jButtonDelAllAtSitesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelAllAtSitesActionPerformed
-        //TODO okno c voprosom uvereni?
-        boolean shureToDel = true;
-
-        if (shureToDel) {
+        if (JOptionPane.showConfirmDialog(this, DEL_ALL_AT_SITES_MESSAGE, DEL_ALL_AT_SITES_TITLE, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
             ((DefaultListModel<String>) jListAtSites.getModel()).removeAllElements();
         }
     }//GEN-LAST:event_jButtonDelAllAtSitesActionPerformed
 
     private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
-        try {
-            for (AWebSearchEngineWrapper wrapper : bolterModel.getUsedWebSearchEngineWrappers()) {
-                String searchWord = bolterModel.getSearchWord();
-
-                if (searchWord != null && !searchWord.isEmpty()) {
+        String searchWord = bolterModel.getSearchWord();
+        if (searchWord != null && !searchWord.isEmpty()) {
+            try {
+                for (AWebSearchEngineWrapper wrapper : bolterModel.getUsedWebSearchEngineWrappers()) {
                     Desktop.getDesktop().browse(new URI(wrapper.genSearchQuery(searchWord, bolterModel.getUsedAtSiteUrlStrs(), bolterModel.getDateFrom(), bolterModel.getDateTo())));
                 }
+            } catch (IOException | URISyntaxException ex) {
             }
-        } catch (IOException | URISyntaxException ex) {
+        } else {
+            JOptionPane.showMessageDialog(this, SEARCH_UNAVAILABLE_MESSAGE, SEARCH_UNAVAILABLE_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButtonSearchActionPerformed
 
@@ -559,7 +571,7 @@ public class BolterFrame extends javax.swing.JFrame {
                 listAtSitesModel.addElement(newAtSiteUrlStr);
                 jListAtSites.addSelectionInterval(listAtSitesModel.getSize() - 1, listAtSitesModel.getSize() - 1);
             } else {
-                //TODO  окно об ошибке
+
             }
         }
     }//GEN-LAST:event_jButtonAddAtSiteActionPerformed
@@ -581,12 +593,16 @@ public class BolterFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jListAtSitesValueChanged
 
     private void jButtonDelAtSiteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelAtSiteActionPerformed
+        String delAtSitesCurMessage = DEL_AT_SITES_MESSAGE;
+
         DefaultListModel<String> listAtSitesModel = (DefaultListModel<String>) jListAtSites.getModel();
+        for (String atSiteUrlStr : jListAtSites.getSelectedValuesList()) {
+            delAtSitesCurMessage += atSiteUrlStr + NEXT_LINE_SMB;
+        }
 
-        //TODO okno c voprosom uvereni?
-        boolean shureToDel = true;
+        delAtSitesCurMessage += NEXT_LINE_SMB;
 
-        if (shureToDel) {
+        if (JOptionPane.showConfirmDialog(this, delAtSitesCurMessage, DEL_AT_SITES_TITLE, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
             for (String atSiteUrlStr : jListAtSites.getSelectedValuesList()) {
                 listAtSitesModel.removeElement(atSiteUrlStr);
             }
@@ -628,8 +644,10 @@ public class BolterFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonDelDateToActionPerformed
 
     private void jButtonDelDatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelDatesActionPerformed
-        jButtonDelDateFromActionPerformed(null);
-        jButtonDelDateToActionPerformed(null);
+        if (JOptionPane.showConfirmDialog(this, DEL_DATES_MESSAGE, DEL_DATES_TITLE, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
+            jButtonDelDateFromActionPerformed(null);
+            jButtonDelDateToActionPerformed(null);
+        }
     }//GEN-LAST:event_jButtonDelDatesActionPerformed
 
     private void jListWebSearchEngineWrappersValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jListWebSearchEngineWrappersValueChanged
@@ -662,20 +680,22 @@ public class BolterFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void jMenuFileItemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuFileItemExitActionPerformed
-        jTextFieldSearchFocusLost(null);
-        jTextFieldLastAtSiteFocusLost(null);
-        jFormattedTextFieldDateFromFocusLost(null);
-        jFormattedTextFieldDateToFocusLost(null);
+        if (JOptionPane.showConfirmDialog(this, DEL_EXIT_MESSAGE, DEL_EXIT_TITLE, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
+            jTextFieldSearchFocusLost(null);
+            jTextFieldLastAtSiteFocusLost(null);
+            jFormattedTextFieldDateFromFocusLost(null);
+            jFormattedTextFieldDateToFocusLost(null);
 
-        BolterModelPreferencesRepository.getInstance().save(bolterModel);
+            BolterModelPreferencesRepository.getInstance().save(bolterModel);
 
-        prefNode.putInt(FRAME_X_MARK, frameNormalX);
-        prefNode.putInt(FRAME_Y_MARK, frameNormalY);
-        prefNode.putInt(FRAME_WIDTH_MARK, frameNormalWidth);
-        prefNode.putInt(FRAME_HEIGHT_MARK, frameNormalHeight);
-        prefNode.putInt(FRAME_EXTENDED_STATE_MARK, getExtendedState());
+            prefNode.putInt(FRAME_X_MARK, frameNormalX);
+            prefNode.putInt(FRAME_Y_MARK, frameNormalY);
+            prefNode.putInt(FRAME_WIDTH_MARK, frameNormalWidth);
+            prefNode.putInt(FRAME_HEIGHT_MARK, frameNormalHeight);
+            prefNode.putInt(FRAME_EXTENDED_STATE_MARK, getExtendedState());
 
-        System.exit(0);
+            System.exit(0);
+        }
     }//GEN-LAST:event_jMenuFileItemExitActionPerformed
 
     private void formComponentMoved(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentMoved
@@ -698,6 +718,11 @@ public class BolterFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_formComponentResized
 
+    private void jMenuHelpItemAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuHelpItemAboutActionPerformed
+        aboutDialog.setLocation(calcMiddleCoord(getX(), getWidth(), aboutDialog.getWidth()), calcMiddleCoord(getY(), getHeight(), aboutDialog.getHeight()));
+        aboutDialog.setVisible(true);
+    }//GEN-LAST:event_jMenuHelpItemAboutActionPerformed
+
     private void setEnabledAddAtSitesButton() {
         jButtonAddAtSite.setEnabled(!jTextFieldLastAtSite.getText().isEmpty());
     }
@@ -715,6 +740,10 @@ public class BolterFrame extends javax.swing.JFrame {
     private void setEnabledDelDateToButton() {
         jButtonDelDateTo.setEnabled(!jFormattedTextFieldDateTo.getText().isEmpty());
         jButtonDelDates.setEnabled(!jFormattedTextFieldDateFrom.getText().isEmpty() || !jFormattedTextFieldDateTo.getText().isEmpty());
+    }
+    
+    static private int calcMiddleCoord(int startCoord, int parentCoord, int ancestorCoord) {
+        return startCoord + (parentCoord - ancestorCoord) / 2;
     }
 
     private class BolterFocusTraversalPolicy extends FocusTraversalPolicy {
@@ -738,11 +767,11 @@ public class BolterFrame extends javax.swing.JFrame {
         @Override
         public Component getComponentAfter(Container aContainer, Component aComponent) {
             Component componentAfter = focusOrder.get((focusOrder.indexOf(aComponent) + 1) % focusOrder.size());
-            
-            if(!canBeFocusOwner(componentAfter)) {
+
+            if (!canBeFocusOwner(componentAfter)) {
                 componentAfter = getComponentAfter(aContainer, componentAfter);
             }
-            
+
             return componentAfter;
         }
 
@@ -752,20 +781,20 @@ public class BolterFrame extends javax.swing.JFrame {
             if (idx < 0) {
                 idx = focusOrder.size() - 1;
             }
-            
+
             Component componentBefore = focusOrder.get(idx);
-            
-            if(!canBeFocusOwner(componentBefore)) {
+
+            if (!canBeFocusOwner(componentBefore)) {
                 componentBefore = getComponentBefore(aContainer, componentBefore);
             }
-            
+
             return componentBefore;
         }
 
         @Override
         public Component getFirstComponent(Container aContainer) {
             Component firstComponent = null;
-            
+
             for (int idx = 0; idx < focusOrder.size(); idx++) {
                 Component aComponent = focusOrder.get(idx);
                 if (canBeFocusOwner(aComponent)) {
@@ -773,14 +802,14 @@ public class BolterFrame extends javax.swing.JFrame {
                     break;
                 }
             }
-            
+
             return firstComponent;
         }
 
         @Override
         public Component getLastComponent(Container aContainer) {
             Component lastComponent = null;
-            
+
             for (int idx = focusOrder.size() - 1; idx >= 0; idx--) {
                 Component aComponent = focusOrder.get(idx);
                 if (canBeFocusOwner(aComponent)) {
@@ -788,7 +817,7 @@ public class BolterFrame extends javax.swing.JFrame {
                     break;
                 }
             }
-            
+
             return lastComponent;
         }
 
@@ -796,17 +825,17 @@ public class BolterFrame extends javax.swing.JFrame {
         public Component getDefaultComponent(Container aContainer) {
             return getFirstComponent(aContainer);
         }
-        
+
         private boolean canBeFocusOwner(Component aComponent) {
             if (aComponent.isEnabled() && aComponent.isDisplayable() && aComponent.isVisible() && aComponent.isFocusable()) {
-                if(aComponent instanceof javax.swing.JList) {
-                    if(((javax.swing.JList) aComponent).getModel().getSize() > 0) {
+                if (aComponent instanceof javax.swing.JList) {
+                    if (((javax.swing.JList) aComponent).getModel().getSize() > 0) {
                         return true;
                     }
-                    
+
                     return false;
                 }
-                
+
                 return true;
             }
 
@@ -816,6 +845,7 @@ public class BolterFrame extends javax.swing.JFrame {
         private final ArrayList<Component> focusOrder = new ArrayList<>();
     }
 
+    private AboutDialog aboutDialog;
     private Preferences prefNode;
     private BolterModel bolterModel;
     private boolean isInitValuesMode;
@@ -832,6 +862,23 @@ public class BolterFrame extends javax.swing.JFrame {
     static final private String FRAME_EXTENDED_STATE_MARK = "frame_extended_state";
 
     static final private SimpleDateFormat SEARCH_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
+
+    static final private String NEXT_LINE_SMB = "\n";
+
+    static final private String SEARCH_UNAVAILABLE_TITLE = "Поиск невозможен!";
+    static final private String SEARCH_UNAVAILABLE_MESSAGE = "Пожалуйста, введите данные для поиска!";
+
+    static final private String DEL_AT_SITES_TITLE = "Удалить следующие записи поиска по сайтам?";
+    static final private String DEL_AT_SITES_MESSAGE = "Вы уверены удалить следующие записи поиска по сайтам?" + NEXT_LINE_SMB + NEXT_LINE_SMB;
+
+    static final private String DEL_ALL_AT_SITES_TITLE = "Удалить все записи поиска по сайтам?";
+    static final private String DEL_ALL_AT_SITES_MESSAGE = "Вы уверены удалить все записи поиска по сайтам?";
+
+    static final private String DEL_DATES_TITLE = "Очистить данные поиска по периоду?";
+    static final private String DEL_DATES_MESSAGE = "Вы уверены очистить данные поиска по периоду?";
+
+    static final private String DEL_EXIT_TITLE = "Выйти?";
+    static final private String DEL_EXIT_MESSAGE = "Вы уверены, что хотите выйти из программы?";
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAddAtSite;
