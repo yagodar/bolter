@@ -93,7 +93,7 @@ public class BolterFrame extends javax.swing.JFrame {
         setTitle("Bolter");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setFocusTraversalPolicy(new BolterFocusTraversalPolicy());
-        setIconImage(Toolkit.getDefaultToolkit().getImage("res/icon.png"));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icon.png")));
         setMinimumSize(new java.awt.Dimension(825, 550));
         setName("bolterFrame"); // NOI18N
         addComponentListener(new java.awt.event.ComponentAdapter() {

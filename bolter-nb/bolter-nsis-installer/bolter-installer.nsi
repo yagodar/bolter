@@ -1,53 +1,63 @@
-# This installs two files, bolter.jar and logo-bolter.ico, creates a start menu shortcut, builds an uninstaller, and
-# adds uninstall information to the registry for Add/Remove Programs
+!include "MUI.nsh"
+!include "x64.nsh"
 
-# To get started, put this script into a folder with the two files (bolter.jar, logo-bolter.ico, and license.rtf -
-# You'll have to create these yourself) and run makensis on it
-
-# If you change the names "bolter.jar", "logo-bolter.ico", or "license.rtf" you should do a search and replace - they
-# show up in a few places.
-# All the other settings can be tweaked by editing the !defines at the top of this script
+!define COMPANYNAME "Yagodar"
 !define APPNAME "Bolter"
-!define COMPANYNAME "YagodarCo"
-!define DESCRIPTION "Программа для организации интернет поиска по определенным сайтам и по определенному промежутку времени."
-# These three must be integers
+
 !define VERSIONMAJOR 1
 !define VERSIONMINOR 0
 !define VERSIONBUILD 0
-# These will be displayed by the "Click here for support information" link in "Add/Remove Programs"
-# It is possible to use "mailto:" links in here to open the email client
-!define HELPURL "http://www.vk.com/bolter.app" # "Support Information" link
-!define UPDATEURL "http://www.vk.com/bolter.app" # "Product Updates" link
-!define ABOUTURL "http://www.vk.com/bolter.app" # "Publisher" link
-# This is the size (in kB) of all the files copied into "Program Files"
+
+!define HELPURL "http://www.vk.com/bolter.app"
+!define UPDATEURL "http://www.vk.com/bolter.app"
+!define ABOUTURL "http://www.vk.com/bolter.app"
+
+!define JRE_VER_REQ "1.7u67"
+!define JRE_X86_URL "http://javadl.sun.com/webapps/download/AutoDL?BundleId=95141" #7u67
+!define JRE_X64_URL "http://javadl.sun.com/webapps/download/AutoDL?BundleId=95141" #7u67
+
+!define JRE_NO_FOUND_MARK "JRE_NO"
+!define JRE_OLD_FOUND_MARK "JRE_OLD"
+!define JRE_OK_FOUND_MARK "JRE_OK"
+
 !define INSTALLSIZE 7233 # TODO
 
-!define JRE_VER_REQ "1.4.1"
+!define APP_FILES_DIR "app-files"
+!define APP_FILE_NAME "bolter.jar"
+!define APP_FILE_ICO "logo-bolter.ico"
 
-RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
+!define INSTALLER_FILES_DIR "installer-files"
+!define INSTALLER_FILE_LICENSE "license-bolter.rtf"
+!define INSTALLER_FILE_ICO "icon-installer.ico"
 
+!define DIST_FILES_DIR "dist"
+
+!define MUI_ICON "${INSTALLER_FILES_DIR}\${INSTALLER_FILE_ICO}"
+!define MUI_PAGE_CUSTOMFUNCTION_PRE CheckJRE
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE CheckJRELeave
+  
+RequestExecutionLevel admin
+
+Name "${APPNAME} ${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONBUILD}"
+OutFile "${DIST_FILES_DIR}\${APPNAME}-${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONBUILD}-installer.exe"
 InstallDir "$PROGRAMFILES\${COMPANYNAME}\${APPNAME}"
 
-# rtf or txt file - remember if it is txt, it must be in the DOS text format (\r\n)
-LicenseData "license-bolter.rtf"
-# This will be in the installer/uninstaller's title bar
-Name "${COMPANYNAME} - ${APPNAME}"
-Icon "icon-installer.ico"
-OutFile "${APPNAME}-${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONBUILD}-installer.exe"
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "${INSTALLER_FILES_DIR}\${INSTALLER_FILE_LICENSE}"
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
 
-!include LogicLib.nsh
+!insertmacro MUI_UNPAGE_WELCOME
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
 
-# Just three pages - license agreement, install location, and installation
-page custom CheckJREPage CheckJRELeave
-page license
-page directory
-page instfiles
+!insertmacro MUI_LANGUAGE "Russian"
 
 !macro VerifyUserIsAdmin
 UserInfo::GetAccountType
 pop $0
 ${If} $0 != "admin" ;Require admin rights on NT4+
-        MessageBox mb_iconstop "Требуются права Администратора!"
+        MessageBox MB_OK|MB_ICONSTOP "Требуются права Администратора!"
         setErrorLevel 740 ;ERROR_ELEVATION_REQUIRED
         quit
 ${EndIf}
@@ -58,106 +68,123 @@ function .onInit
 	!insertmacro VerifyUserIsAdmin
 functionEnd
 
-Function CheckJREPage
-        Push "${JRE_VER_REQ}"
+Function CheckJRE
         Call DetectJRE
-        Messagebox MB_OK "Done checking JRE version"
-        Exch $0	; Get return value from stack
-        StrCmp $0 "0" NoFound
-        StrCmp $0 "-1" FoundOld
-        Goto JREAlreadyInstalled
+        Pop $R0
+        StrCmp $R0 ${JRE_OK_FOUND_MARK} Done InstallJRE
 
-        FoundOld:
-        MessageBox MB_OK "Найдена старая версия JRE. Для работы ${AppName} требуется более новая версия JRE - ${JRE_VER_REQ}. Установка будет прекращена."
-        Abort
-        
-        NoFound:
-        MessageBox MB_OK "JRE не найдено! Установка будет прекращена."
-        Abort
-        
-        JREAlreadyInstalled:
-        Pop $0		; Restore $0
-        
+        InstallJRE:
+            Call DownloadAndInstallJRE
+            Call DetectJRE
+            Pop $R0
+            StrCmp $R0 ${JRE_OK_FOUND_MARK} Done Quit
+
+        Quit:
+             MessageBox MB_OK|MB_ICONSTOP "Загрузка и установка Java не удалась!"
+             Call Quit
+
+        Done:
+            Return
+
 FunctionEnd
 
 Function CheckJRELeave
-        Abort
+        Return
 FunctionEnd
 
 Function DetectJRE
-          Exch $0	; Get version requested
-        		; Now the previous value of $0 is on the stack, and the asked for version of JDK is in $0
-          Push $1	; $1 = Java version string (ie 1.5.0)
-          Push $2	; $2 = Javahome
-          Push $3	; $3 and $4 are used for checking the major/minor version of java
-          Push $4
-          MessageBox MB_OK "Detecting JRE"
-          ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
-          MessageBox MB_OK "Read : $1"
-          StrCmp $1 "" DetectTry2
-          ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$1" "JavaHome"
-          MessageBox MB_OK "Read 3: $2"
-          StrCmp $2 "" DetectTry2
-          Goto GetJRE
+         Push $R0 # result
+         Push $1 # JRE_VER_CUR
+         Push $2 # JRE_HOME
+         Push $3 # JRE_VER_CUR_MAJ
+         Push $4 # JRE_VER_REQ_MAJ
+         Push $5 # JRE_VER_CUR_MINOR
+         Push $6 # JRE_VER_REQ_MINOR
 
-        DetectTry2:
-          ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Development Kit" "CurrentVersion"
-          MessageBox MB_OK "Detect Read : $1"
-          StrCmp $1 "" NoFound
-          ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Development Kit\$1" "JavaHome"
-          MessageBox MB_OK "Detect Read 3: $2"
-          StrCmp $2 "" NoFound
+         ReadRegStr $1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
+         StrCmp $1 "" NoFound DetectJREHome
+
+        DetectJREHome:
+         ReadRegStr $2 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$1" "JavaHome"
+         StrCmp $2 "" NoFound GetJRE
 
         GetJRE:
-        ; $0 = version requested. $1 = version found. $2 = javaHome
-          MessageBox MB_OK "Getting JRE"
           IfFileExists "$2\bin\java.exe" 0 NoFound
-          StrCpy $3 $0 1			; Get major version. Example: $1 = 1.5.0, now $3 = 1
-          StrCpy $4 $1 1			; $3 = major version requested, $4 = major version found
-          MessageBox MB_OK "Want $3 , found $4"
-          IntCmp $4 $3 0 FoundOld FoundNew
-          StrCpy $3 $0 1 2
-          StrCpy $4 $1 1 2			; Same as above. $3 is minor version requested, $4 is minor version installed
-          MessageBox MB_OK "Want $3 , found $4"
-          IntCmp $4 $3 FoundNew FoundOld FoundNew
+
+          StrCpy $3 $1 1
+          StrCpy $4 ${JRE_VER_REQ} 1
+          IntCmp $3 $4 0 FoundOld
+
+          StrCpy $5 $1 1 2
+          StrCpy $6 ${JRE_VER_REQ} 1 2
+          IntCmp $5 $6 0 FoundOld
+
+          StrCpy $R0 ${JRE_OK_FOUND_MARK}
+          Goto Done
 
         NoFound:
-          MessageBox MB_OK "JRE not found"
-          Push "0"
-          Goto DetectJREEnd
+          StrCpy $R0 ${JRE_NO_FOUND_MARK}
+          Goto Done
 
         FoundOld:
-          MessageBox MB_OK "JRE too old: $3 is older than $4"
-        ;  Push ${TEMP2}
-          Push "-1"
-          Goto DetectJREEnd
-        FoundNew:
-          MessageBox MB_OK "JRE is new: $3 is newer than $4"
+          StrCpy $R0 ${JRE_OLD_FOUND_MARK}
+          Goto Done
 
-          Push "$2\bin\java.exe"
-        ;  Push "OK"
-        ;  Return
-           Goto DetectJREEnd
-        DetectJREEnd:
-        	; Top of stack is return value, then r4,r3,r2,r1
-        	Exch	; => r4,rv,r3,r2,r1,r0
-        	Pop $4	; => rv,r3,r2,r1r,r0
-        	Exch	; => r3,rv,r2,r1,r0
-        	Pop $3	; => rv,r2,r1,r0
-        	Exch 	; => r2,rv,r1,r0
-        	Pop $2	; => rv,r1,r0
-        	Exch	; => r1,rv,r0
-        	Pop $1	; => rv,r0
-        	Exch	; => r0,rv
-        	Pop $0	; => rv
+        Done:
+             Pop $6
+             Pop $5
+             Pop $4
+             Pop $3
+             Pop $2
+             Pop $1
+             Exch $R0
+             Return
 FunctionEnd
 
-section "install"
+Function DownloadAndInstallJRE
+        Push $1 # PATH_TEMP_EXE
+
+        ${If} ${RunningX64}
+              StrCpy $R1 ${JRE_X64_URL}
+        ${Else}
+              StrCpy $R1 ${JRE_X86_URL}
+        ${EndIf}
+
+        MessageBox MB_OKCANCEL|MB_ICONQUESTION "Программа ${APPNAME} использует Java Runtime Environment ${JRE_VER_REQ}. \
+                                                В системе не найдено подходящей версии. Загрузить и установить? \
+                                                ($R1) \
+                                                (При отрицательном ответе установка ${APPNAME} будет отменена)" IDOK DownloadAndInstall IDCANCEL Done
+
+        DownloadAndInstall:
+                StrCpy $1 "$TEMP\Java Runtime Environment.exe"
+                nsisdl::download /TIMEOUT=30000 $R1 $1
+                Pop $R0 ;Get the return value
+                StrCmp $R0 "success" DoneDownload FailedDownload
+
+
+        DoneDownload:
+                ExecWait $1
+                Delete $1
+                GoTo Done
+
+        FailedDownload:
+                MessageBox MB_OK|MB_ICONSTOP "Загрузка не удалась: $R0"
+                Call Quit
+
+        Done:
+            Pop $1
+FunctionEnd
+
+Function Quit
+        MessageBox MB_OK|MB_ICONSTOP "Установка ${APPNAME} отменена!"
+        Quit
+FunctionEnd
+
+Section "Install"
 	# Files for the install directory - to build the installer, these should be in the same directory as the install script (this file)
-	setOutPath $INSTDIR
+	SetOutPath $INSTDIR
 	# Files added here should be removed by the uninstaller (see section "uninstall")
-	file "bolter.jar"
-	file "logo-bolter.ico"
+	file "${APP_FILES_DIR}\*.*"
 	# Add any other files for the install directory (license files, app data, etc) here
 
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
@@ -165,19 +192,22 @@ section "install"
 
 	# Start Menu
 	createDirectory "$SMPROGRAMS\${COMPANYNAME}"
-	createShortCut "$SMPROGRAMS\${COMPANYNAME}\${APPNAME}.lnk" "$INSTDIR\bolter.jar" "" "$INSTDIR\logo-bolter.ico"
+	createShortCut "$SMPROGRAMS\${COMPANYNAME}\${APPNAME}.lnk" "$INSTDIR\${APP_FILE_NAME}" "" "$INSTDIR\${APP_FILE_ICO}"
+
+        # Desktop
+	createShortCut "$DESKTOP\${APPNAME}.lnk" "$INSTDIR\${APP_FILE_NAME}" "" "$INSTDIR\${APP_FILE_ICO}"
 
 	# Registry information for add/remove programs
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "DisplayName" "${COMPANYNAME} - ${APPNAME} - ${DESCRIPTION}"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "DisplayName" "${APPNAME} ${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONBUILD}"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\" /S"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "InstallLocation" "$\"$INSTDIR$\""
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "DisplayIcon" "$\"$INSTDIR\logo-bolter.ico$\""
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "Publisher" "$\"${COMPANYNAME}$\""
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "HelpLink" "$\"${HELPURL}$\""
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "URLUpdateInfo" "$\"${UPDATEURL}$\""
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "URLInfoAbout" "$\"${ABOUTURL}$\""
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "DisplayVersion" "$\"${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONBUILD}$\""
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "DisplayIcon" "$\"$INSTDIR\${APP_FILE_ICO}$\""
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "Publisher" "${COMPANYNAME}"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "HelpLink" "${HELPURL}"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "URLUpdateInfo" "${UPDATEURL}"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "URLInfoAbout" "${ABOUTURL}"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "DisplayVersion" "${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONBUILD}"
 	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "VersionMajor" ${VERSIONMAJOR}
 	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "VersionMinor" ${VERSIONMINOR}
 	# There is no option for modifying or repairing the install
@@ -186,8 +216,6 @@ section "install"
 	# Set the INSTALLSIZE constant (!defined at the top of this script) so Add/Remove Programs can accurately report the size
 	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "EstimatedSize" ${INSTALLSIZE}
 sectionEnd
-
-# Uninstaller
 
 function un.onInit
 	SetShellVarContext all
@@ -199,19 +227,22 @@ function un.onInit
 	!insertmacro VerifyUserIsAdmin
 functionEnd
 
-section "uninstall"
+section "Uninstall"
 
 	# Remove Start Menu launcher
 	delete "$SMPROGRAMS\${COMPANYNAME}\${APPNAME}.lnk"
+
+	# Remove Desktop launcher
+	delete "$DESKTOP\${APPNAME}.lnk"
+
 	# Try to remove the Start Menu folder - this will only happen if it is empty
 	rmDir "$SMPROGRAMS\${COMPANYNAME}"
 
 	# Remove files
-	delete $INSTDIR\bolter.jar
-	delete $INSTDIR\logo-bolter.ico
+	delete "$INSTDIR\*.*"
 
 	# Always delete uninstaller as the last action
-	delete $INSTDIR\uninstall.exe
+	delete "$INSTDIR\uninstall.exe"
 
 	# Try to remove the install directory - this will only happen if it is empty
 	rmDir $INSTDIR
