@@ -19,6 +19,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.prefs.Preferences;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -480,9 +482,7 @@ public class BolterFrame extends javax.swing.JFrame {
                         .addComponent(jTextFieldSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButtonSearch))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, 0)
-                        .addComponent(jPanelSearchFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 738, Short.MAX_VALUE)))
+                    .addComponent(jPanelSearchFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 738, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -506,42 +506,7 @@ public class BolterFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void initBunners() {
-        new SwingWorker<Document, Void>() {
-            @Override
-            protected Document doInBackground() throws Exception {
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder builder = factory.newDocumentBuilder();
-                return builder.parse(XML_BANNER_URL);
-            }
-
-            @Override
-            protected void done() {
-                URL imgUrl = null;
-                String linkUrlText = null;
-
-                try {
-                    Document doc = get();
-                    NodeList children = doc.getDocumentElement().getChildNodes();
-                    for (int i = 0; i < children.getLength(); i++) {
-                        Node child = children.item(i);
-                        if (child instanceof Element) {
-                            Element childElement = (Element) child;
-                            if (childElement.getTagName().equals(XML_BANNER_TAG_IMG)) {
-                                imgUrl = new URL(childElement.getAttribute(XML_BANNER_ATTR_URL));
-                            } else if (childElement.getTagName().equals(XML_BANNER_TAG_LINK)) {
-                                linkUrlText = childElement.getAttribute(XML_BANNER_ATTR_URL);
-                            }
-                        }
-                    }
-                } catch (Exception ex) {}
-
-                if (imgUrl != null && linkUrlText != null) {
-                    jLabelBunnerLink.setText(null);
-                    jLabelBunnerLink.setIcon(new javax.swing.ImageIcon(imgUrl));
-                    jLabelBunnerLink.setToolTipText(linkUrlText);
-                }
-            }
-        }.execute();
+        (new Timer()).schedule(new BunnerUpdateTask(), 0, 10000);
     }
 
     private void initModalDialogs() {
@@ -944,6 +909,49 @@ public class BolterFrame extends javax.swing.JFrame {
         private final ArrayList<Component> focusOrder = new ArrayList<>();
     }
 
+    private class BunnerUpdateTask extends TimerTask {
+        @Override
+        public void run() {
+            new SwingWorker<Document, Void>() {
+                @Override
+                protected Document doInBackground() throws Exception {
+                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder builder = factory.newDocumentBuilder();
+                    return builder.parse(XML_BANNER_URL);
+                }
+
+                @Override
+                protected void done() {
+                    URL imgUrl = null;
+                    String linkUrlText = null;
+
+                    try {
+                        Document doc = get();
+                        NodeList children = doc.getDocumentElement().getChildNodes();
+                        for (int i = 0; i < children.getLength(); i++) {
+                            Node child = children.item(i);
+                            if (child instanceof Element) {
+                                Element childElement = (Element) child;
+                                if (childElement.getTagName().equals(XML_BANNER_TAG_IMG)) {
+                                    imgUrl = new URL(childElement.getAttribute(XML_BANNER_ATTR_URL));
+                                } else if (childElement.getTagName().equals(XML_BANNER_TAG_LINK)) {
+                                    linkUrlText = childElement.getAttribute(XML_BANNER_ATTR_URL);
+                                }
+                            }
+                        }
+                    } catch (Exception ex) {
+                    }
+
+                    if (imgUrl != null && linkUrlText != null) {
+                        jLabelBunnerLink.setText(null);
+                        jLabelBunnerLink.setIcon(new javax.swing.ImageIcon(imgUrl));
+                        jLabelBunnerLink.setToolTipText(linkUrlText);
+                    }
+                }
+            }.execute();
+        }
+    }
+    
     private AboutDialog aboutDialog;
     private Preferences prefNode;
     private BolterModel bolterModel;
