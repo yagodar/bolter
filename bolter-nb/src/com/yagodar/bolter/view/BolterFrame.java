@@ -17,6 +17,7 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Timer;
@@ -573,12 +574,12 @@ public class BolterFrame extends javax.swing.JFrame {
 
         Date date = bolterModel.getDateFrom();
         if (date != null) {
-            jFormattedTextFieldDateFrom.setText(SEARCH_DATE_FORMAT.format(date));
+            jFormattedTextFieldDateFrom.setText(BOLTER_DATE_FORMAT.format(date));
         }
 
         date = bolterModel.getDateTo();
         if (date != null) {
-            jFormattedTextFieldDateTo.setText(SEARCH_DATE_FORMAT.format(date));
+            jFormattedTextFieldDateTo.setText(BOLTER_DATE_FORMAT.format(date));
         }
 
         DefaultListModel<AWebSearchEngineWrapper> listWebSearchEngineWrappersModel = (DefaultListModel<AWebSearchEngineWrapper>) jListWebSearchEngineWrappers.getModel();
@@ -612,7 +613,7 @@ public class BolterFrame extends javax.swing.JFrame {
     private void jFormattedTextFieldDateFromFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jFormattedTextFieldDateFromFocusLost
         if (!isInitValuesMode) {
             try {
-                bolterModel.setDateFrom(SEARCH_DATE_FORMAT.parse(jFormattedTextFieldDateFrom.getText()));
+                bolterModel.setDateFrom(BOLTER_DATE_FORMAT.parse(jFormattedTextFieldDateFrom.getText()));
                 setEnabledDelDateFromButton();
             } catch (ParseException ex) {
                 bolterModel.setDateFrom(null);
@@ -623,7 +624,7 @@ public class BolterFrame extends javax.swing.JFrame {
     private void jFormattedTextFieldDateToFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jFormattedTextFieldDateToFocusLost
         if (!isInitValuesMode) {
             try {
-                bolterModel.setDateTo(SEARCH_DATE_FORMAT.parse(jFormattedTextFieldDateTo.getText()));
+                bolterModel.setDateTo(BOLTER_DATE_FORMAT.parse(jFormattedTextFieldDateTo.getText()));
                 setEnabledDelDateToButton();
             } catch (ParseException ex) {
                 bolterModel.setDateTo(null);
@@ -924,6 +925,7 @@ public class BolterFrame extends javax.swing.JFrame {
                 protected void done() {
                     URL imgUrl = null;
                     String linkUrlText = null;
+                    String dateText = null;
 
                     try {
                         Document doc = get();
@@ -933,19 +935,39 @@ public class BolterFrame extends javax.swing.JFrame {
                             if (child instanceof Element) {
                                 Element childElement = (Element) child;
                                 if (childElement.getTagName().equals(XML_BANNER_TAG_IMG)) {
-                                    imgUrl = new URL(childElement.getAttribute(XML_BANNER_ATTR_URL));
+                                    imgUrl = new URL(childElement.getAttribute(XML_BANNER_ATTR_VAL));
                                 } else if (childElement.getTagName().equals(XML_BANNER_TAG_LINK)) {
-                                    linkUrlText = childElement.getAttribute(XML_BANNER_ATTR_URL);
+                                    linkUrlText = childElement.getAttribute(XML_BANNER_ATTR_VAL);
+                                } else if (childElement.getTagName().equals(XML_BANNER_TAG_DATE)) {
+                                    dateText = childElement.getAttribute(XML_BANNER_ATTR_VAL);
                                 }
                             }
                         }
                     } catch (Exception ex) {
                     }
 
-                    if (imgUrl != null && linkUrlText != null) {
-                        jLabelBunnerLink.setText(null);
-                        jLabelBunnerLink.setIcon(new javax.swing.ImageIcon(imgUrl));
-                        jLabelBunnerLink.setToolTipText(linkUrlText);
+                    if (dateText != null && imgUrl != null && linkUrlText != null) {
+                        Date date = null;
+                        if (!dateText.isEmpty()) {
+                            try {
+                                date = BOLTER_DATE_FORMAT.parse(dateText);
+                            } catch (ParseException ex) {
+                                Calendar cal = Calendar.getInstance();
+                                cal.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR) - 1);
+                                date = cal.getTime();
+                            }
+                        }
+                        else {
+                            Calendar cal = Calendar.getInstance();
+                            cal.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR) + 1);
+                            date = cal.getTime();
+                        }
+                        
+                        if (Calendar.getInstance().getTime().before(date)) {
+                            jLabelBunnerLink.setText(null);
+                            jLabelBunnerLink.setIcon(new javax.swing.ImageIcon(imgUrl));
+                            jLabelBunnerLink.setToolTipText(linkUrlText);
+                        }
                     }
                 }
             }.execute();
@@ -968,7 +990,7 @@ public class BolterFrame extends javax.swing.JFrame {
     static final private String FRAME_HEIGHT_MARK = "frame_height";
     static final private String FRAME_EXTENDED_STATE_MARK = "frame_extended_state";
 
-    static final private SimpleDateFormat SEARCH_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
+    static final private SimpleDateFormat BOLTER_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
     static final private String NEXT_LINE_SMB = "\n";
 
@@ -990,7 +1012,8 @@ public class BolterFrame extends javax.swing.JFrame {
     static final private String XML_BANNER_URL = "https://raw.githubusercontent.com/yagodar/bolter/master/bolter-nb/bunners/bunner-info.xml";
     static final private String XML_BANNER_TAG_IMG = "img";
     static final private String XML_BANNER_TAG_LINK = "link";
-    static final private String XML_BANNER_ATTR_URL = "url";
+    static final private String XML_BANNER_TAG_DATE = "date";
+    static final private String XML_BANNER_ATTR_VAL = "val";
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAddAtSite;
