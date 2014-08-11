@@ -59,6 +59,9 @@ public class AboutDialog extends javax.swing.JDialog {
         jLabelAppInfo5 = new javax.swing.JLabel();
         jLabelAppInfo6 = new javax.swing.JLabel();
         jLabelBolterSourceLink = new javax.swing.JLabel();
+        jLabelLicense = new javax.swing.JLabel();
+        jLabelLicenseLink = new javax.swing.JLabel();
+        jLabelCopyright = new javax.swing.JLabel();
 
         jLabel3.setText("jLabel3");
 
@@ -85,7 +88,7 @@ public class AboutDialog extends javax.swing.JDialog {
         jLabelVersion.setText("v. 1.0.0");
 
         jLabelBolterLink.setText("<html><body><a href=\"\">обсуждение</a></body></html>\n");
-        jLabelBolterLink.setToolTipText("http://www.vk.com/bolter.app");
+        jLabelBolterLink.setToolTipText("http://vk.com/bolter_app");
         jLabelBolterLink.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabelBolterLink.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -102,7 +105,7 @@ public class AboutDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabelAuthor.setText("<html><body><a href=\"\">Ягодаров Андрей Евгеньевич</a></body></html>\n");
+        jLabelAuthor.setText("<html><body><a href=\"\">Ягодаров Андрей</a></body></html>\n");
         jLabelAuthor.setToolTipText("http://www.vk.com/yagodar");
         jLabelAuthor.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabelAuthor.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -163,7 +166,7 @@ public class AboutDialog extends javax.swing.JDialog {
 
         jLabelAppInfo6.setText("<html><body>Запросы формируются с использованием языка запросов определенного поискового движка, а также с использованием параметров GET-запроса определенного движка.</body></html>");
 
-        jLabelBolterSourceLink.setText("<html><body><a href=\"\">исходники</a></body></html>\n");
+        jLabelBolterSourceLink.setText("<html><body><a href=\"\">исходный код</a></body></html>\n");
         jLabelBolterSourceLink.setToolTipText("https://github.com/yagodar/bolter");
         jLabelBolterSourceLink.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabelBolterSourceLink.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -171,6 +174,21 @@ public class AboutDialog extends javax.swing.JDialog {
                 jLabelBolterSourceLinkMouseClicked(evt);
             }
         });
+
+        jLabelLicense.setText("Это произведение доступно по лицензии");
+        jLabelLicense.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+
+        jLabelLicenseLink.setText("<html><body><a href=\"\">GNU General Public License v.3</a></body></html>");
+        jLabelLicenseLink.setToolTipText("http://www.gnu.org/licenses/gpl-3.0.html");
+        jLabelLicenseLink.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabelLicenseLink.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        jLabelLicenseLink.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelLicenseLinkMouseClicked(evt);
+            }
+        });
+
+        jLabelCopyright.setText("Copyright © 2014");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -184,23 +202,16 @@ public class AboutDialog extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabelAuthorLink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabelAuthorEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabelDonateWebMoney)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextFieldWebMonerWallet, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabelAuthor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabelDonateText))
                             .addComponent(jSeparator1)
                             .addComponent(jSeparator2)
                             .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabelApp)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabelApp)
+                                    .addComponent(jLabelLicense, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabelLicenseLink, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabelVersion, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -219,7 +230,24 @@ public class AboutDialog extends javax.swing.JDialog {
                                         .addGap(0, 0, 0)
                                         .addComponent(jLabelAppInfo4))
                                     .addComponent(jLabelAppInfo5))
-                                .addGap(0, 1, Short.MAX_VALUE)))))
+                                .addGap(0, 1, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabelCopyright)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabelAuthor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabelAuthorLink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabelAuthorEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(jLabelDonateWebMoney)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jTextFieldWebMonerWallet, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabelDonateText, javax.swing.GroupLayout.Alignment.TRAILING))))))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
@@ -230,12 +258,18 @@ public class AboutDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabelApp)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelVersion)
-                    .addComponent(jLabelBolterLink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelBolterSourceLink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabelApp)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabelVersion)
+                            .addComponent(jLabelBolterLink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabelBolterSourceLink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabelLicense)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelLicenseLink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelAppInfo1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -255,7 +289,8 @@ public class AboutDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelAuthor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelDonateText))
+                    .addComponent(jLabelDonateText)
+                    .addComponent(jLabelCopyright))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelAuthorLink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -304,6 +339,10 @@ public class AboutDialog extends javax.swing.JDialog {
         browseLink(jLabelBolterSourceLink.getToolTipText());
     }//GEN-LAST:event_jLabelBolterSourceLinkMouseClicked
 
+    private void jLabelLicenseLinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelLicenseLinkMouseClicked
+        browseLink(jLabelLicenseLink.getToolTipText());
+    }//GEN-LAST:event_jLabelLicenseLinkMouseClicked
+
     private void browseLink(String link) {
         try {
             Desktop.getDesktop().browse(new URI(link));
@@ -326,9 +365,12 @@ public class AboutDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabelAuthorLink;
     private javax.swing.JLabel jLabelBolterLink;
     private javax.swing.JLabel jLabelBolterSourceLink;
+    private javax.swing.JLabel jLabelCopyright;
     private javax.swing.JLabel jLabelDonateText;
     private javax.swing.JLabel jLabelDonateWebMoney;
     private javax.swing.JLabel jLabelGoogleLink;
+    private javax.swing.JLabel jLabelLicense;
+    private javax.swing.JLabel jLabelLicenseLink;
     private javax.swing.JLabel jLabelVersion;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;

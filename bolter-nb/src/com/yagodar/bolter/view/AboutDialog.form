@@ -52,25 +52,18 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabelAuthorLink" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabelAuthorEmail" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Component id="jLabelDonateWebMoney" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jTextFieldWebMonerWallet" min="-2" pref="104" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabelAuthor" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Component id="jLabelDonateText" min="-2" max="-2" attributes="0"/>
-                          </Group>
                           <Component id="jSeparator1" alignment="0" max="32767" attributes="0"/>
                           <Component id="jSeparator2" alignment="0" max="32767" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jLabelApp" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabelLicense" alignment="1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabelLicenseLink" alignment="1" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabelApp" min="-2" max="-2" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="jLabelVersion" min="-2" pref="50" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
@@ -94,6 +87,29 @@
                               </Group>
                               <EmptySpace min="0" pref="1" max="32767" attributes="0"/>
                           </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="jLabelCopyright" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jLabelAuthor" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="jLabelAuthorLink" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jLabelAuthorEmail" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Component id="jLabelDonateWebMoney" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jTextFieldWebMonerWallet" min="-2" pref="104" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="jLabelDonateText" alignment="1" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
                       </Group>
                   </Group>
               </Group>
@@ -110,12 +126,21 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jLabelApp" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabelVersion" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabelBolterLink" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabelBolterSourceLink" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="jLabelApp" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabelVersion" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabelBolterLink" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabelBolterSourceLink" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="jLabelLicense" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jLabelLicenseLink" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jLabelAppInfo1" min="-2" max="-2" attributes="0"/>
@@ -139,6 +164,7 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabelAuthor" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabelDonateText" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabelCopyright" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -184,7 +210,7 @@
     <Component class="javax.swing.JLabel" name="jLabelBolterLink">
       <Properties>
         <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;body&gt;&lt;a href=&quot;&quot;&gt;&#x43e;&#x431;&#x441;&#x443;&#x436;&#x434;&#x435;&#x43d;&#x438;&#x435;&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;&#xa;"/>
-        <Property name="toolTipText" type="java.lang.String" value="http://www.vk.com/bolter.app"/>
+        <Property name="toolTipText" type="java.lang.String" value="http://vk.com/bolter_app"/>
         <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
           <Color id="Hand Cursor"/>
         </Property>
@@ -207,7 +233,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabelAuthor">
       <Properties>
-        <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;body&gt;&lt;a href=&quot;&quot;&gt;&#x42f;&#x433;&#x43e;&#x434;&#x430;&#x440;&#x43e;&#x432; &#x410;&#x43d;&#x434;&#x440;&#x435;&#x439; &#x415;&#x432;&#x433;&#x435;&#x43d;&#x44c;&#x435;&#x432;&#x438;&#x447;&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;&#xa;"/>
+        <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;body&gt;&lt;a href=&quot;&quot;&gt;&#x42f;&#x433;&#x43e;&#x434;&#x430;&#x440;&#x43e;&#x432; &#x410;&#x43d;&#x434;&#x440;&#x435;&#x439;&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;&#xa;"/>
         <Property name="toolTipText" type="java.lang.String" value="http://www.vk.com/yagodar"/>
         <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
           <Color id="Hand Cursor"/>
@@ -317,7 +343,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabelBolterSourceLink">
       <Properties>
-        <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;body&gt;&lt;a href=&quot;&quot;&gt;&#x438;&#x441;&#x445;&#x43e;&#x434;&#x43d;&#x438;&#x43a;&#x438;&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;&#xa;"/>
+        <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;body&gt;&lt;a href=&quot;&quot;&gt;&#x438;&#x441;&#x445;&#x43e;&#x434;&#x43d;&#x44b;&#x439; &#x43a;&#x43e;&#x434;&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;&#xa;"/>
         <Property name="toolTipText" type="java.lang.String" value="https://github.com/yagodar/bolter"/>
         <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
           <Color id="Hand Cursor"/>
@@ -326,6 +352,30 @@
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jLabelBolterSourceLinkMouseClicked"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabelLicense">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="&#x42d;&#x442;&#x43e; &#x43f;&#x440;&#x43e;&#x438;&#x437;&#x432;&#x435;&#x434;&#x435;&#x43d;&#x438;&#x435; &#x434;&#x43e;&#x441;&#x442;&#x443;&#x43f;&#x43d;&#x43e; &#x43f;&#x43e; &#x43b;&#x438;&#x446;&#x435;&#x43d;&#x437;&#x438;&#x438;"/>
+        <Property name="horizontalTextPosition" type="int" value="10"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabelLicenseLink">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;body&gt;&lt;a href=&quot;&quot;&gt;GNU General Public License v.3&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;"/>
+        <Property name="toolTipText" type="java.lang.String" value="http://www.gnu.org/licenses/gpl-3.0.html"/>
+        <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+          <Color id="Hand Cursor"/>
+        </Property>
+        <Property name="horizontalTextPosition" type="int" value="10"/>
+      </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jLabelLicenseLinkMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabelCopyright">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Copyright &#xa9; 2014"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

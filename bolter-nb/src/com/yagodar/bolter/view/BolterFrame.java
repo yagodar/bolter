@@ -72,6 +72,7 @@ public class BolterFrame extends javax.swing.JFrame {
         jButtonDelAllAtSites = new javax.swing.JButton();
         jScrollPaneListAtSites = new javax.swing.JScrollPane();
         jListAtSites = new javax.swing.JList<String>();
+        jLabel1 = new javax.swing.JLabel();
         jPanelSearchFilterDate = new javax.swing.JPanel();
         jLabelDateFrom = new javax.swing.JLabel();
         jLabelDateTo = new javax.swing.JLabel();
@@ -83,6 +84,7 @@ public class BolterFrame extends javax.swing.JFrame {
         jPanelSearchFilterEngine = new javax.swing.JPanel();
         jScrollPaneWebSearchEngineWrappers = new javax.swing.JScrollPane();
         jListWebSearchEngineWrappers = new javax.swing.JList<AWebSearchEngineWrapper>();
+        jLabel2 = new javax.swing.JLabel();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuFileItemExit = new javax.swing.JMenuItem();
@@ -94,7 +96,7 @@ public class BolterFrame extends javax.swing.JFrame {
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setFocusTraversalPolicy(new BolterFocusTraversalPolicy());
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icon.png")));
-        setMinimumSize(new java.awt.Dimension(825, 550));
+        setMinimumSize(new java.awt.Dimension(780, 550));
         setName("bolterFrame"); // NOI18N
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentMoved(java.awt.event.ComponentEvent evt) {
@@ -193,22 +195,27 @@ public class BolterFrame extends javax.swing.JFrame {
         });
         jScrollPaneListAtSites.setViewportView(jListAtSites);
 
+        jLabel1.setText("<html>\n<body>\nЧтобы <b>выделить / снять выделение</b> нескольких сайтов, зажмите <b>Ctrl</b> или <b>Shift</b>\n</body>\n</html>");
+
         javax.swing.GroupLayout jPanelSearchFilterSitesLayout = new javax.swing.GroupLayout(jPanelSearchFilterSites);
         jPanelSearchFilterSites.setLayout(jPanelSearchFilterSitesLayout);
         jPanelSearchFilterSitesLayout.setHorizontalGroup(
             jPanelSearchFilterSitesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelSearchFilterSitesLayout.createSequentialGroup()
+            .addGroup(jPanelSearchFilterSitesLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanelSearchFilterSitesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanelSearchFilterSitesLayout.createSequentialGroup()
-                        .addComponent(jButtonAddAtSite)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonDelAtSite)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonDelAllAtSites)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPaneListAtSites, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextFieldLastAtSite, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanelSearchFilterSitesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPaneListAtSites, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTextFieldLastAtSite, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanelSearchFilterSitesLayout.createSequentialGroup()
+                        .addGroup(jPanelSearchFilterSitesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanelSearchFilterSitesLayout.createSequentialGroup()
+                                .addComponent(jButtonAddAtSite)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonDelAtSite)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonDelAllAtSites))
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanelSearchFilterSitesLayout.setVerticalGroup(
@@ -222,7 +229,9 @@ public class BolterFrame extends javax.swing.JFrame {
                     .addComponent(jButtonDelAtSite)
                     .addComponent(jButtonDelAllAtSites))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPaneListAtSites, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPaneListAtSites, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -360,9 +369,12 @@ public class BolterFrame extends javax.swing.JFrame {
             jPanelSearchFilterEngineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelSearchFilterEngineLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPaneWebSearchEngineWrappers)
+                .addComponent(jScrollPaneWebSearchEngineWrappers, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
                 .addContainerGap())
         );
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/728x90.jpg"))); // NOI18N
+        jLabel2.setToolTipText("");
 
         javax.swing.GroupLayout jPanelSearchFilterLayout = new javax.swing.GroupLayout(jPanelSearchFilter);
         jPanelSearchFilter.setLayout(jPanelSearchFilterLayout);
@@ -374,14 +386,22 @@ public class BolterFrame extends javax.swing.JFrame {
                 .addGroup(jPanelSearchFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanelSearchFilterDate, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
                     .addComponent(jPanelSearchFilterEngine, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelSearchFilterLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanelSearchFilterLayout.setVerticalGroup(
             jPanelSearchFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelSearchFilterLayout.createSequentialGroup()
-                .addComponent(jPanelSearchFilterDate, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelSearchFilterEngine, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jPanelSearchFilterSites, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanelSearchFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelSearchFilterLayout.createSequentialGroup()
+                        .addComponent(jPanelSearchFilterDate, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanelSearchFilterEngine, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanelSearchFilterSites, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(11, 11, 11)
+                .addComponent(jLabel2))
         );
 
         jMenuBar.setMinimumSize(new java.awt.Dimension(92, 21));
@@ -890,6 +910,8 @@ public class BolterFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButtonSearch;
     private javax.swing.JFormattedTextField jFormattedTextFieldDateFrom;
     private javax.swing.JFormattedTextField jFormattedTextFieldDateTo;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabelApp;
     private javax.swing.JLabel jLabelDateFrom;
     private javax.swing.JLabel jLabelDateTo;
