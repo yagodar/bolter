@@ -507,7 +507,7 @@ public class BolterFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void initBunners() {
-        (new Timer()).schedule(new BunnerUpdateTask(), 0, 10000);
+        (new Timer()).schedule(new BunnerUpdateTask(), 0, BANNER_UPDATE_PERIOD);
     }
 
     private void initModalDialogs() {
@@ -1009,6 +1009,7 @@ public class BolterFrame extends javax.swing.JFrame {
     static final private String DEL_EXIT_TITLE = "Выйти?";
     static final private String DEL_EXIT_MESSAGE = "Вы уверены, что хотите выйти из программы?";
 
+    static final private long BANNER_UPDATE_PERIOD = 1 * 60 * 60 * 1000;
     static final private String XML_BANNER_URL = "https://raw.githubusercontent.com/yagodar/bolter/master/bolter-nb/bunners/bunner-info.xml";
     static final private String XML_BANNER_TAG_IMG = "img";
     static final private String XML_BANNER_TAG_LINK = "link";
