@@ -8,14 +8,12 @@ package com.yagodar.bolter.view;
 import com.yagodar.bolter.model.BolterModel;
 import com.yagodar.bolter.model.rep.BolterModelPreferencesRepository;
 import com.yagodar.bolter.model.sew.AWebSearchEngineWrapper;
+import com.yagodar.bolter.util.Util;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Desktop;
 import java.awt.FocusTraversalPolicy;
 import java.awt.Toolkit;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,8 +22,15 @@ import java.util.Enumeration;
 import java.util.prefs.Preferences;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  *
@@ -41,10 +46,12 @@ public class BolterFrame extends javax.swing.JFrame {
     public BolterFrame(BolterModel bolterModel) {
         initComponents();
 
+        initBunners();
+
         initModalDialogs();
-        
+
         initPreferences();
-        
+
         initModel(bolterModel);
 
         initValues();
@@ -84,7 +91,7 @@ public class BolterFrame extends javax.swing.JFrame {
         jPanelSearchFilterEngine = new javax.swing.JPanel();
         jScrollPaneWebSearchEngineWrappers = new javax.swing.JScrollPane();
         jListWebSearchEngineWrappers = new javax.swing.JList<AWebSearchEngineWrapper>();
-        jLabel2 = new javax.swing.JLabel();
+        jLabelBunner = new javax.swing.JLabel();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuFileItemExit = new javax.swing.JMenuItem();
@@ -369,12 +376,17 @@ public class BolterFrame extends javax.swing.JFrame {
             jPanelSearchFilterEngineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelSearchFilterEngineLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPaneWebSearchEngineWrappers, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(jScrollPaneWebSearchEngineWrappers, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/728x90.jpg"))); // NOI18N
-        jLabel2.setToolTipText("");
+        jLabelBunner.setToolTipText("");
+        jLabelBunner.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabelBunner.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelBunnerMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelSearchFilterLayout = new javax.swing.GroupLayout(jPanelSearchFilter);
         jPanelSearchFilter.setLayout(jPanelSearchFilterLayout);
@@ -388,7 +400,7 @@ public class BolterFrame extends javax.swing.JFrame {
                     .addComponent(jPanelSearchFilterEngine, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelSearchFilterLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel2)
+                .addComponent(jLabelBunner)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanelSearchFilterLayout.setVerticalGroup(
@@ -399,9 +411,9 @@ public class BolterFrame extends javax.swing.JFrame {
                         .addComponent(jPanelSearchFilterDate, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanelSearchFilterEngine, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanelSearchFilterSites, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jPanelSearchFilterSites, javax.swing.GroupLayout.PREFERRED_SIZE, 409, Short.MAX_VALUE))
                 .addGap(11, 11, 11)
-                .addComponent(jLabel2))
+                .addComponent(jLabelBunner))
         );
 
         jMenuBar.setMinimumSize(new java.awt.Dimension(92, 21));
@@ -466,10 +478,49 @@ public class BolterFrame extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void initBunners() {
+        new SwingWorker<Document, Void>() {
+            @Override
+            protected Document doInBackground() throws Exception {
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder = factory.newDocumentBuilder();
+                return builder.parse(XML_BANNER_URL);
+            }
+
+            @Override
+            protected void done() {
+                URL imgUrl = null;
+                String linkUrlText = null;
+
+                try {
+                    Document doc = get();
+                    NodeList children = doc.getDocumentElement().getChildNodes();
+                    for (int i = 0; i < children.getLength(); i++) {
+                        Node child = children.item(i);
+                        if (child instanceof Element) {
+                            Element childElement = (Element) child;
+                            if (childElement.getTagName().equals(XML_BANNER_TAG_IMG)) {
+                                imgUrl = new URL(childElement.getAttribute(XML_BANNER_ATTR_URL));
+                            } else if (childElement.getTagName().equals(XML_BANNER_TAG_LINK)) {
+                                linkUrlText = childElement.getAttribute(XML_BANNER_ATTR_URL);
+                            }
+                        }
+                    }
+                } catch (Exception ex) {
+                }
+
+                if (imgUrl != null && linkUrlText != null) {
+                    jLabelBunner.setIcon(new javax.swing.ImageIcon(imgUrl));
+                    jLabelBunner.setToolTipText(linkUrlText);
+                }
+            }
+        }.execute();
+    }
+
     private void initModalDialogs() {
         aboutDialog = new AboutDialog(this);
     }
-    
+
     private void initPreferences() {
         prefNode = Preferences.userNodeForPackage(getClass());
 
@@ -558,11 +609,8 @@ public class BolterFrame extends javax.swing.JFrame {
     private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
         String searchWord = bolterModel.getSearchWord();
         if (searchWord != null && !searchWord.isEmpty()) {
-            try {
-                for (AWebSearchEngineWrapper wrapper : bolterModel.getUsedWebSearchEngineWrappers()) {
-                    Desktop.getDesktop().browse(new URI(wrapper.genSearchQuery(searchWord, bolterModel.getUsedAtSiteUrlStrs(), bolterModel.getDateFrom(), bolterModel.getDateTo())));
-                }
-            } catch (IOException | URISyntaxException ex) {
+            for (AWebSearchEngineWrapper wrapper : bolterModel.getUsedWebSearchEngineWrappers()) {
+                Util.browseLink(wrapper.genSearchQuery(searchWord, bolterModel.getUsedAtSiteUrlStrs(), bolterModel.getDateFrom(), bolterModel.getDateTo()));
             }
         } else {
             JOptionPane.showMessageDialog(this, SEARCH_UNAVAILABLE_MESSAGE, SEARCH_UNAVAILABLE_TITLE, JOptionPane.ERROR_MESSAGE);
@@ -743,6 +791,10 @@ public class BolterFrame extends javax.swing.JFrame {
         aboutDialog.setVisible(true);
     }//GEN-LAST:event_jMenuHelpItemAboutActionPerformed
 
+    private void jLabelBunnerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelBunnerMouseClicked
+        Util.browseLink(jLabelBunner.getToolTipText());
+    }//GEN-LAST:event_jLabelBunnerMouseClicked
+
     private void setEnabledAddAtSitesButton() {
         jButtonAddAtSite.setEnabled(!jTextFieldLastAtSite.getText().isEmpty());
     }
@@ -761,7 +813,7 @@ public class BolterFrame extends javax.swing.JFrame {
         jButtonDelDateTo.setEnabled(!jFormattedTextFieldDateTo.getText().isEmpty());
         jButtonDelDates.setEnabled(!jFormattedTextFieldDateFrom.getText().isEmpty() || !jFormattedTextFieldDateTo.getText().isEmpty());
     }
-    
+
     static private int calcMiddleCoord(int startCoord, int parentCoord, int ancestorCoord) {
         return startCoord + (parentCoord - ancestorCoord) / 2;
     }
@@ -900,6 +952,11 @@ public class BolterFrame extends javax.swing.JFrame {
     static final private String DEL_EXIT_TITLE = "Выйти?";
     static final private String DEL_EXIT_MESSAGE = "Вы уверены, что хотите выйти из программы?";
 
+    static final private String XML_BANNER_URL = "https://raw.githubusercontent.com/yagodar/bolter/master/bolter-nb/bunners/bunner-info.xml";
+    static final private String XML_BANNER_TAG_IMG = "img";
+    static final private String XML_BANNER_TAG_LINK = "link";
+    static final private String XML_BANNER_ATTR_URL = "url";
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAddAtSite;
     private javax.swing.JButton jButtonDelAllAtSites;
@@ -911,8 +968,8 @@ public class BolterFrame extends javax.swing.JFrame {
     private javax.swing.JFormattedTextField jFormattedTextFieldDateFrom;
     private javax.swing.JFormattedTextField jFormattedTextFieldDateTo;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabelApp;
+    private javax.swing.JLabel jLabelBunner;
     private javax.swing.JLabel jLabelDateFrom;
     private javax.swing.JLabel jLabelDateTo;
     private javax.swing.JList<String> jListAtSites;

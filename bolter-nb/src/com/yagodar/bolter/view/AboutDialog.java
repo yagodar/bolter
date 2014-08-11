@@ -5,11 +5,8 @@
  */
 package com.yagodar.bolter.view;
 
-import java.awt.Desktop;
+import com.yagodar.bolter.util.Util;
 import java.awt.Frame;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  *
@@ -312,43 +309,37 @@ public class AboutDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_jButtonOkActionPerformed
 
     private void jLabelBolterLinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelBolterLinkMouseClicked
-        browseLink(jLabelBolterLink.getToolTipText());
+        Util.browseLink(jLabelBolterLink.getToolTipText());
     }//GEN-LAST:event_jLabelBolterLinkMouseClicked
 
     private void jLabelAppInfoYandexLinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelAppInfoYandexLinkMouseClicked
-        browseLink(jLabelAppInfoYandexLink.getToolTipText());
+        Util.browseLink(jLabelAppInfoYandexLink.getToolTipText());
     }//GEN-LAST:event_jLabelAppInfoYandexLinkMouseClicked
 
     private void jLabelGoogleLinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelGoogleLinkMouseClicked
-        browseLink(jLabelGoogleLink.getToolTipText());
+        Util.browseLink(jLabelGoogleLink.getToolTipText());
     }//GEN-LAST:event_jLabelGoogleLinkMouseClicked
 
     private void jLabelAuthorLinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelAuthorLinkMouseClicked
-        browseLink(jLabelAuthorLink.getToolTipText());
+        Util.browseLink(jLabelAuthorLink.getToolTipText());
     }//GEN-LAST:event_jLabelAuthorLinkMouseClicked
 
     private void jLabelAuthorEmailMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelAuthorEmailMouseClicked
-         browseLink(jLabelAuthorEmail.getToolTipText());
+        Util.browseLink(jLabelAuthorEmail.getToolTipText());
     }//GEN-LAST:event_jLabelAuthorEmailMouseClicked
 
     private void jLabelAuthorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelAuthorMouseClicked
-        browseLink(jLabelAuthor.getToolTipText());
+        Util.browseLink(jLabelAuthor.getToolTipText());
     }//GEN-LAST:event_jLabelAuthorMouseClicked
 
     private void jLabelBolterSourceLinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelBolterSourceLinkMouseClicked
-        browseLink(jLabelBolterSourceLink.getToolTipText());
+        Util.browseLink(jLabelBolterSourceLink.getToolTipText());
     }//GEN-LAST:event_jLabelBolterSourceLinkMouseClicked
 
     private void jLabelLicenseLinkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelLicenseLinkMouseClicked
-        browseLink(jLabelLicenseLink.getToolTipText());
+        Util.browseLink(jLabelLicenseLink.getToolTipText());
     }//GEN-LAST:event_jLabelLicenseLinkMouseClicked
 
-    private void browseLink(String link) {
-        try {
-            Desktop.getDesktop().browse(new URI(link));
-        } catch (IOException | URISyntaxException ex) {}
-    }
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonOk;
     private javax.swing.JLabel jLabel3;
