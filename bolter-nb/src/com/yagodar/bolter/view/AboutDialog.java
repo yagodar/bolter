@@ -74,6 +74,7 @@ public class AboutDialog extends javax.swing.JDialog {
         jLabelLicense = new javax.swing.JLabel();
         jLabelLicenseLink = new javax.swing.JLabel();
         jLabelCopyright = new javax.swing.JLabel();
+        jLabelSlogan = new javax.swing.JLabel();
 
         jLabel3.setText("jLabel3");
 
@@ -202,6 +203,8 @@ public class AboutDialog extends javax.swing.JDialog {
 
         jLabelCopyright.setText("Copyright © 2014");
 
+        jLabelSlogan.setText("Интерактивный web-поиск");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -218,10 +221,13 @@ public class AboutDialog extends javax.swing.JDialog {
                             .addComponent(jSeparator2)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabelApp)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(10, 10, 10)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabelLicense, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabelLicenseLink, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(jLabelSlogan)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabelLicenseLink, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
@@ -272,7 +278,9 @@ public class AboutDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabelApp)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabelApp)
+                            .addComponent(jLabelSlogan))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabelVersion)
@@ -377,6 +385,7 @@ public class AboutDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabelGoogleLink;
     private javax.swing.JLabel jLabelLicense;
     private javax.swing.JLabel jLabelLicenseLink;
+    private javax.swing.JLabel jLabelSlogan;
     private javax.swing.JLabel jLabelVersion;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;

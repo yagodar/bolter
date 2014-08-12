@@ -3,6 +3,7 @@
 
 !define COMPANYNAME "Yagodar"
 !define APPNAME "Bolter"
+!define APP_OUTNAME "bolter"
 
 !define VERSIONMAJOR 1
 !define VERSIONMINOR 0
@@ -39,7 +40,7 @@
 RequestExecutionLevel admin
 
 Name "${APPNAME} ${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONBUILD}"
-OutFile "${DIST_FILES_DIR}\${APPNAME}-${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONBUILD}-installer.exe"
+OutFile "${DIST_FILES_DIR}\${APP_OUTNAME}-installer.exe"
 InstallDir "$PROGRAMFILES\${COMPANYNAME}\${APPNAME}"
 
 !insertmacro MUI_PAGE_WELCOME

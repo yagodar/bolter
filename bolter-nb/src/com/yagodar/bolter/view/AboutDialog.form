@@ -56,10 +56,14 @@
                           <Component id="jSeparator2" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jLabelApp" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabelLicense" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabelLicenseLink" alignment="1" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Component id="jLabelSlogan" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="32767" attributes="0"/>
+                                      <Component id="jLabelLicenseLink" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                           </Group>
                           <Group type="102" attributes="0">
@@ -128,7 +132,10 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jLabelApp" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabelApp" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabelSlogan" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabelVersion" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -375,6 +382,11 @@
     <Component class="javax.swing.JLabel" name="jLabelCopyright">
       <Properties>
         <Property name="text" type="java.lang.String" value="Copyright &#xa9; 2014"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabelSlogan">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="&#x418;&#x43d;&#x442;&#x435;&#x440;&#x430;&#x43a;&#x442;&#x438;&#x432;&#x43d;&#x44b;&#x439; web-&#x43f;&#x43e;&#x438;&#x441;&#x43a;"/>
       </Properties>
     </Component>
   </SubComponents>
