@@ -778,8 +778,8 @@ public class BolterFrame extends javax.swing.JFrame {
             if (!listAtSitesModel.contains(newAtSiteUrlStr)) {
                 listAtSitesModel.addElement(newAtSiteUrlStr);
                 jListAtSites.addSelectionInterval(listAtSitesModel.getSize() - 1, listAtSitesModel.getSize() - 1);
-            } else {
-
+                
+                jTextFieldLastAtSite.setText(null);
             }
         }
     }//GEN-LAST:event_jButtonAddAtSiteActionPerformed
