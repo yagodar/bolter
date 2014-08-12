@@ -36,10 +36,8 @@ public class LockFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAlwaysOnTop(true);
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icon.png")));
-        setIconImages(null);
         setName("lockFrame"); // NOI18N
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(250, 80));
         setResizable(false);
 
         jPanelLockMsg.setBorder(javax.swing.BorderFactory.createEtchedBorder());
