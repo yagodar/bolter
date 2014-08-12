@@ -1,7 +1,21 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Bolter. Interactive web-search. 
+ * <http://vk.com/bolter_app>
+ * 
+ * Copyright (C) 2014  Yagodarov Andrey <yagodarov.a.e@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.yagodar.bolter.model.sew;
@@ -14,7 +28,7 @@ import java.util.Date;
 
 /**
  *
- * @author АППДКт78М
+ * @author Yagodarov Andrey <yagodarov.a.e@gmail.com>
  */
 public abstract class AWebSearchEngineWrapper {
     public AWebSearchEngineWrapper(String name, String url, String key) {
