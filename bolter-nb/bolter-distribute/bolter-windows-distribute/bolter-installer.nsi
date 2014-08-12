@@ -8,9 +8,9 @@
 !define VERSIONMINOR 0
 !define VERSIONBUILD 0
 
-!define HELPURL "http://www.vk.com/bolter.app"
-!define UPDATEURL "http://www.vk.com/bolter.app"
-!define ABOUTURL "http://www.vk.com/bolter.app"
+!define HELPURL "http://vk.com/topic-75467490_30292704"
+!define UPDATEURL "http://vk.com/bolter_app"
+!define ABOUTURL "http://vk.com/bolter_app"
 
 !define JRE_VER_REQ "1.7u67"
 !define JRE_X86_URL "http://javadl.sun.com/webapps/download/AutoDL?BundleId=95141" #7u67
@@ -150,7 +150,7 @@ Function DownloadAndInstallJRE
               StrCpy $R1 ${JRE_X86_URL}
         ${EndIf}
 
-        MessageBox MB_OKCANCEL|MB_ICONQUESTION "Программа ${APPNAME} использует Java Runtime Environment ${JRE_VER_REQ}. \
+        MessageBox MB_OKCANCEL|MB_ICONQUESTION "Программа ${APPNAME} ${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONBUILD} использует Java Runtime Environment ${JRE_VER_REQ}. \
                                                 В системе не найдено подходящей версии. Загрузить и установить? \
                                                 ($R1) \
                                                 (При отрицательном ответе установка ${APPNAME} будет отменена)" IDOK DownloadAndInstall IDCANCEL Done
