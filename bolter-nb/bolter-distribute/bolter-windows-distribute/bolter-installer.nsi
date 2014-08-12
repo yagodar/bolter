@@ -232,19 +232,22 @@ section "Uninstall"
 
 	# Remove Start Menu launcher
 	delete "$SMPROGRAMS\${COMPANYNAME}\${APPNAME}.lnk"
+	
+	# Try to remove the Start Menu folder - this will only happen if it is empty
+	rmDir "$SMPROGRAMS\${COMPANYNAME}"
 
 	# Remove Desktop launcher
 	delete "$DESKTOP\${APPNAME}.lnk"
 
-	# Try to remove the Start Menu folder - this will only happen if it is empty
-	rmDir "$SMPROGRAMS\${COMPANYNAME}"
+        # Remove documents files
+	delete "$PROFILE\.${APP_OUTNAME}\*.*"
+	
+	# Try to remove the documents folder - this will only happen if it is empty
+	rmDir "$PROFILE\.${APP_OUTNAME}"
 
 	# Remove files
 	delete "$INSTDIR\*.*"
-
-	# Always delete uninstaller as the last action
-	delete "$INSTDIR\uninstall.exe"
-
+	
 	# Try to remove the install directory - this will only happen if it is empty
 	rmDir $INSTDIR
 

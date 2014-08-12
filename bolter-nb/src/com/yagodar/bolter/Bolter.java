@@ -54,8 +54,13 @@ public class Bolter {
     }
     
     private static boolean lock() {
+        File lockFileDir = new File(LOCK_FILE_DIR);
+        if (!lockFileDir.exists()) {
+            lockFileDir.mkdir();
+        }
+
         try {
-            final FileLock lock = new FileOutputStream(new File(LOCK_FILE_NAME)).getChannel().tryLock();
+            final FileLock lock = new FileOutputStream(new File(LOCK_FILE_DIR, LOCK_FILE_NAME)).getChannel().tryLock();
             if (lock != null) {
                 Thread t = new Thread(new Runnable(){
                     public void run() {
@@ -71,11 +76,14 @@ public class Bolter {
                 t.start();
             }
             return lock != null;
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         
         return true;
     }
     
+    private static final String LOCK_FILE_DIR = System.getProperty("user.home") + "\\.bolter";
     private static final String LOCK_FILE_NAME = ".lock";
     private static final long SLEEP_TIME_IF_LOCK = 750;
 }
