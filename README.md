@@ -1,4 +1,7 @@
 bolter
 ======
 
-Portable searcher.
+Interactive web-search.
+======
+
+<http://vk.com/bolter_app>
